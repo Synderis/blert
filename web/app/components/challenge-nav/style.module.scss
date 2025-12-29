@@ -1,14 +1,15 @@
 @use '../../mixins.scss' as *;
 
 .nav {
-  width: calc(100vw - $LEFT_NAV_WIDTH);
-  background: var(--blert-surface-dark);
-  border-bottom: 1px solid var(--blert-surface-light);
+  width: calc(100vw - var(--left-nav-width, $LEFT_NAV_WIDTH));
+  background: var(--nav-bg);
+  border-bottom: 1px solid var(--nav-bg-lightened);
   padding: 0 20px;
   position: fixed;
   top: 0;
-  left: $LEFT_NAV_WIDTH;
+  left: var(--left-nav-width, $LEFT_NAV_WIDTH);
   z-index: 25;
+  transition: left 0.3s ease, width 0.3s ease;
 }
 
 .navItems {
@@ -27,7 +28,7 @@
   align-items: center;
   gap: 8px;
   padding: 8px 16px;
-  color: var(--blert-font-color-secondary);
+  color: var(--font-color-nav);
   font-size: 0.9em;
   text-decoration: none;
   border-radius: 4px;
@@ -35,55 +36,55 @@
 
   i {
     font-size: 0.9em;
-    color: var(--blert-font-color-secondary);
+    color: var(--font-color-nav);
   }
 
   svg {
-    fill: var(--blert-font-color-secondary);
-    stroke: var(--blert-font-color-secondary);
+    fill: var(--font-color-nav);
+    stroke: var(--font-color-nav);
   }
 
   path {
-    fill: var(--blert-font-color-secondary);
-    stroke: var(--blert-font-color-secondary);
+    fill: var(--font-color-nav);
+    stroke: var(--font-color-nav);
   }
 
   &:hover:not(.disabled) {
-    background: var(--blert-surface-light);
-    color: var(--blert-font-color-primary);
+    background: var(--nav-bg-lightened);
+    color: var(--blert-text-color);
 
     i {
-      color: var(--blert-purple);
+      color: var(--blert-button);
     }
 
     svg {
-      fill: var(--blert-purple);
-      stroke: var(--blert-purple);
+      fill: var(--blert-button);
+      stroke: var(--blert-button);
     }
 
     path {
-      fill: var(--blert-purple);
-      stroke: var(--blert-purple);
+      fill: var(--blert-button);
+      stroke: var(--blert-button);
     }
   }
 
   &.active {
-    background: var(--blert-surface-light);
-    color: var(--blert-font-color-primary);
+    background: var(--nav-bg-lightened);
+    color: var(--blert-text-color);
     font-weight: 500;
 
     i {
-      color: var(--blert-purple);
+      color: var(--blert-button);
     }
 
     svg {
-      fill: var(--blert-purple);
-      stroke: var(--blert-purple);
+      fill: var(--blert-button);
+      stroke: var(--blert-button);
     }
 
     path {
-      fill: var(--blert-purple);
-      stroke: var(--blert-purple);
+      fill: var(--blert-button);
+      stroke: var(--blert-button);
     }
   }
 
@@ -102,20 +103,20 @@
   font-weight: 600;
   font-size: 0.95em;
   font-family: var(--font-cinzel);
-  color: var(--blert-font-color-secondary);
-  background: var(--blert-surface-dark);
+  color: var(--font-color-nav);
+  background: var(--nav-bg);
   border-radius: 4px;
   padding: 0 4px;
   transition: all 0.2s ease;
 
   .navItem:hover:not(.disabled) & {
-    color: var(--blert-purple);
-    background: var(--blert-surface-light);
+    color: var(--blert-button);
+    background: var(--nav-bg-lightened);
   }
 
   .navItem.active & {
-    color: var(--blert-purple);
-    background: var(--blert-surface-light);
+    color: var(--blert-button);
+    background: var(--nav-bg-lightened);
   }
 }
 
@@ -134,8 +135,8 @@
   left: 0;
   z-index: 1000;
   min-width: 180px;
-  background: var(--blert-panel-background-color);
-  border: 1px solid var(--blert-surface-light);
+  background: var(--panel-bg);
+  border: 1px solid var(--nav-bg-lightened);
   border-radius: 6px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
   padding: 8px 0;
@@ -148,7 +149,7 @@
   align-items: center;
   gap: 12px;
   padding: 10px 16px;
-  color: var(--blert-font-color-secondary);
+  color: var(--font-color-nav);
   font-size: 0.85em;
   text-decoration: none;
   transition: all 0.2s ease;
@@ -156,55 +157,55 @@
 
   i {
     font-size: 0.85em;
-    color: var(--blert-font-color-secondary);
+    color: var(--font-color-nav);
   }
 
   svg {
-    fill: var(--blert-font-color-secondary);
-    stroke: var(--blert-font-color-secondary);
+    fill: var(--font-color-nav);
+    stroke: var(--font-color-nav);
   }
 
   path {
-    fill: var(--blert-font-color-secondary);
-    stroke: var(--blert-font-color-secondary);
+    fill: var(--font-color-nav);
+    stroke: var(--font-color-nav);
   }
 
   &:hover:not(.disabled) {
-    background: var(--blert-surface-dark);
-    color: var(--blert-font-color-primary);
+    background: var(--nav-bg);
+    color: var(--blert-text-color);
 
     i {
-      color: var(--blert-purple);
+      color: var(--blert-button);
     }
 
     svg {
-      fill: var(--blert-purple);
-      stroke: var(--blert-purple);
+      fill: var(--blert-button);
+      stroke: var(--blert-button);
     }
 
     path {
-      fill: var(--blert-purple);
-      stroke: var(--blert-purple);
+      fill: var(--blert-button);
+      stroke: var(--blert-button);
     }
   }
 
   &.active {
-    background: var(--blert-surface-dark);
-    color: var(--blert-font-color-primary);
+    background: var(--nav-bg);
+    color: var(--blert-text-color);
     font-weight: 500;
 
     i {
-      color: var(--blert-purple);
+      color: var(--blert-button);
     }
 
     svg {
-      fill: var(--blert-purple);
-      stroke: var(--blert-purple);
+      fill: var(--blert-button);
+      stroke: var(--blert-button);
     }
 
     path {
-      fill: var(--blert-purple);
-      stroke: var(--blert-purple);
+      fill: var(--blert-button);
+      stroke: var(--blert-button);
     }
   }
 
@@ -218,7 +219,7 @@
     height: 20px;
     font-size: 0.8em;
     font-weight: 600;
-    background: var(--blert-surface-dark);
+    background: var(--nav-bg);
     border-radius: 3px;
     padding: 0 2px;
   }
@@ -237,8 +238,8 @@
     left: 0;
     top: $TOPBAR_HEIGHT;
     padding: 0;
-    background: var(--blert-panel-background-color);
-    border-bottom: 1px solid var(--blert-surface-dark);
+    background: var(--panel-bg);
+    border-bottom: 1px solid var(--nav-bg);
     z-index: 20;
   }
 
@@ -266,20 +267,12 @@
 
     &::before {
       left: 0;
-      background: linear-gradient(
-        to right,
-        var(--blert-panel-background-color) 40%,
-        transparent
-      );
+      background: linear-gradient(to right, var(--panel-bg) 40%, transparent);
     }
 
     &::after {
       right: 0;
-      background: linear-gradient(
-        to left,
-        var(--blert-panel-background-color) 40%,
-        transparent
-      );
+      background: linear-gradient(to left, var(--panel-bg) 40%, transparent);
     }
 
     &::-webkit-scrollbar {
@@ -296,7 +289,7 @@
       background: linear-gradient(
         to right,
         transparent 0%,
-        var(--blert-purple) 50%,
+        var(--blert-button) 50%,
         transparent 100%
       );
       opacity: 0.3;

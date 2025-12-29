@@ -1,10 +1,13 @@
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
-import { Suspense } from 'react';
+import { useContext } from 'react';
 
 import { MAIN_LOGO } from '@/logo';
+import { NavbarContext } from '@/display';
 
-import AccountStatus, { AccountStatusSkeleton } from './account-status';
+import AccountStatus from './account-status';
 import { LEFT_NAV_WIDTH } from './definitions';
 import { LeftNavWrapper } from './left-nav-wrapper';
 import NavPlayerSearch from './nav-player-search';
@@ -12,9 +15,22 @@ import NavPlayerSearch from './nav-player-search';
 import styles from './styles.module.scss';
 
 export function LeftNav() {
+  const { sidebarCollapsed: collapsed, setSidebarCollapsed: setCollapsed } = useContext(NavbarContext);
+
   return (
-    <LeftNavWrapper>
-      <div className={styles.leftNav} style={{ width: LEFT_NAV_WIDTH }}>
+    <LeftNavWrapper collapsed={collapsed}>
+      <div
+        className={`${styles.leftNav} ${collapsed ? styles.collapsed : ''}`}
+        style={{ width: collapsed ? 60 : LEFT_NAV_WIDTH }}
+      >
+        <button
+          className={styles.collapseToggle}
+          onClick={() => setCollapsed(!collapsed)}
+          aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+        >
+          <i className={`fas fa-chevron-${collapsed ? 'right' : 'left'}`} />
+        </button>
+
         <div className={styles.leftNav__logo}>
           <Link className={styles.homeImage} href="/">
             <Image
@@ -227,9 +243,7 @@ export function LeftNav() {
           </li>
         </ul>
 
-        <Suspense fallback={<AccountStatusSkeleton />}>
-          <AccountStatus />
-        </Suspense>
+        <AccountStatus />
 
         <div className={styles.leftNav__externalLinks}>
           <div className={styles.leftNav__externalLink}>
