@@ -1,73 +1,98 @@
-import { Metadata } from 'next';
-import Link from 'next/link';
-import Image from 'next/image';
+// import { Metadata } from 'next';
+// import Link from 'next/link';
+// import Image from 'next/image';
 
-import CollapsiblePanel from '../../../components/collapsible-panel';
-import PvMContentLogo, {
-  PvMContent,
-} from '../../../components/pvm-content-logo';
+// import CollapsiblePanel from '../../../components/collapsible-panel';
+// import PvMContentLogo, {
+//   PvMContent,
+// } from '../../../components/pvm-content-logo';
 
-import styles from './style.module.scss';
+// import styles from './style.module.scss';
+
+// export default function Page() {
+//   return (
+//     <>
+//       <PvMContentLogo
+//         pvmContent={PvMContent.ChambersOfXeric}
+//         height={482}
+//         width={623}
+//       />
+//       <CollapsiblePanel
+//         panelTitle="The Chambers of Xeric"
+//         maxPanelHeight={2000}
+//         defaultExpanded={true}
+//         disableExpansion={true}
+//       >
+//         <div className={styles.coxOverviewInner}>
+//           <Image
+//             className={styles.raid__Logo}
+//             src="/tobdataegirl_cox.png"
+//             alt="ToB Preview"
+//             height={300}
+//             width={300}
+//             style={{ objectFit: 'cover' }}
+//           />
+
+//           <div className={styles.textGreeting}>
+//             <p
+//               style={{
+//                 fontSize: '26px',
+//                 paddingTop: '50px',
+//               }}
+//             >
+//               We are adding raid recording support for the Chambers of Xeric
+//               raid soon! Stay tuned for updates. If you have any questions,
+//               would like to help out, provide feedback, or just want to chat,
+//               feel free to join our{' '}
+//               <Link
+//                 href="https://discord.gg/c5Hgv3NnYe"
+//                 target="_blank"
+//                 rel="noreferrer noopener"
+//                 style={{ textDecoration: 'underline' }}
+//               >
+//                 Discord Server
+//               </Link>
+//               !
+//               <br />
+//               <br />
+//               Also, read our{' '}
+//               <Link href="/" style={{ textDecoration: 'underline' }}>
+//                 FAQ
+//               </Link>
+//               !
+//             </p>
+//           </div>
+//         </div>
+//       </CollapsiblePanel>
+//     </>
+//   );
+// }
+
+// export const metadata: Metadata = {
+//   title: 'Chambers of Xeric',
+// };
+import { ChallengeType } from '@blert/common';
+import { ResolvingMetadata } from 'next';
+
+import { basicMetadata } from '@/utils/metadata';
+import ChallengePage from '../../challenge-page';
 
 export default function Page() {
-  return (
-    <>
-      <PvMContentLogo
-        pvmContent={PvMContent.ChambersOfXeric}
-        height={482}
-        width={623}
-      />
-      <CollapsiblePanel
-        panelTitle="The Chambers of Xeric"
-        maxPanelHeight={2000}
-        defaultExpanded={true}
-        disableExpansion={true}
-      >
-        <div className={styles.coxOverviewInner}>
-          <Image
-            className={styles.raid__Logo}
-            src="/tobdataegirl_cox.png"
-            alt="ToB Preview"
-            height={300}
-            width={300}
-            style={{ objectFit: 'cover' }}
-          />
-
-          <div className={styles.textGreeting}>
-            <p
-              style={{
-                fontSize: '26px',
-                paddingTop: '50px',
-              }}
-            >
-              We are adding raid recording support for the Chambers of Xeric
-              raid soon! Stay tuned for updates. If you have any questions,
-              would like to help out, provide feedback, or just want to chat,
-              feel free to join our{' '}
-              <Link
-                href="https://discord.gg/c5Hgv3NnYe"
-                target="_blank"
-                rel="noreferrer noopener"
-                style={{ textDecoration: 'underline' }}
-              >
-                Discord Server
-              </Link>
-              !
-              <br />
-              <br />
-              Also, read our{' '}
-              <Link href="/" style={{ textDecoration: 'underline' }}>
-                FAQ
-              </Link>
-              !
-            </p>
-          </div>
-        </div>
-      </CollapsiblePanel>
-    </>
-  );
+  return <ChallengePage type={ChallengeType.COX} />;
 }
 
-export const metadata: Metadata = {
-  title: 'Chambers of Xeric',
-};
+export async function generateMetadata(
+  _props: Record<string, never>,
+  parent: ResolvingMetadata,
+) {
+  return basicMetadata(await parent, {
+    title: 'Chambers of Xeric Activity — OSRS Raid Stats & Analytics',
+    description:
+      'Track recent Chambers of Xeric raids with real-time session breakdowns, ' +
+      "completion stats, and player activity. See who's raiding, how long " +
+      "they lasted, and where they wiped on Blert, Old School RuneScape's " +
+      'premier PvM tracker.',
+  });
+}
+
+export const dynamic = 'force-dynamic';

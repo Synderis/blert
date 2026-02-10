@@ -59,6 +59,11 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
       {
+        source: '/raids/cox/:id',
+        destination: '/raids/cox/:id/overview',
+        permanent: true,
+      },
+      {
         source: '/challenges/mokhaiotl/:id',
         destination: '/challenges/mokhaiotl/:id/overview',
         permanent: true,

@@ -42,6 +42,9 @@ export function modeNameAndColor(
   if (type === ChallengeType.MOKHAIOTL) {
     return [short ? 'MOK' : 'Mokhaiotl', '#c16056'];
   }
+  if (type === ChallengeType.COX) {
+    return [short ? 'COX' : 'Chambers of Xeric', '#6f42c1'];
+  }
 
   switch (difficulty) {
     case ChallengeMode.TOB_REGULAR: {
@@ -235,6 +238,27 @@ export function relevantSplitsForStage(
     case Stage.MOKHAIOTL_DELVE_8:
       const delve = stage - Stage.MOKHAIOTL_DELVE_1;
       splits = [SplitType.MOKHAIOTL_DELVE_1 + delve];
+      break;
+
+    case Stage.COX_TEKTON:
+      break;
+    case Stage.COX_CRABS:
+      break;
+    case Stage.COX_ICE_DEMON:
+      break;
+    case Stage.COX_SHAMANS:
+      break;
+    case Stage.COX_VANGUARDS:
+      break;
+    case Stage.COX_THIEVING:
+      break;
+    case Stage.COX_VASA:
+      break;
+    case Stage.COX_GUARDIANS:
+      break;
+    case Stage.COX_MYSTICS:
+      break;
+    case Stage.COX_OLM:
       break;
 
     default:

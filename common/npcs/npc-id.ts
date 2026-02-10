@@ -201,6 +201,55 @@ export enum NpcId {
   EARTHEN_SHIELD = 14715,
   GIANT_DEMONIC_RANGE_LARVA = 14788,
   GIANT_DEMONIC_MAGIC_LARVA = 14789,
+
+  // Chambers of Xeric NPCs.
+  TEKTON_1 = 7545,
+  TEKTON_2 = 7540,
+  TEKTON_3 = 7541,
+  TEKTON_4 = 7542,
+  TEKTON_ENRAGED_1 = 7543,
+  TEKTON_ENRAGED_2 = 7544,
+
+  ICE_DEMON_1 = 7584,
+  ICE_DEMON_2 = 7585,
+
+  LIZARDMAN_SHAMAN_1 = 7573,
+  LIZARDMAN_SHAMAN_2 = 7574,
+
+  VANGUARD_INITIAL = 7525,
+  VANGUARD_MELEE = 7527,
+  VANGUARD_RANGED = 7528,
+  VANGUARD_MAGIC = 7529,
+
+  CORRUPTED_SCAVENGER = 7602,
+  ABYSSAL_PORTAL = 7533,
+
+  GUARDIAN_1_LIVE = 7569,
+  GUARDIAN_1_DEAD = 7571,
+  GUARDIAN_2_LIVE = 7570,
+  GUARDIAN_2_DEAD = 7572,
+
+  VASA_NISTIRIO_1 = 7565,
+  VASA_NISTIRIO_2 = 7566,
+  VASA_NISTIRIO_3 = 7567,
+  GLOWING_CRYSTAL = 7568,
+
+  SKELETAL_MYSTIC_1 = 7604,
+  SKELETAL_MYSTIC_2 = 7605,
+  SKELETAL_MYSTIC_3 = 7606,
+
+  MUTTADILE_LARGE_1 = 7561,
+  MUTTADILE_LARGE_2 = 7563,
+  MUTTADILE_SMALL = 7562,
+
+  OLM_MAGE_HAND_1 = 7550,
+  OLM_MAGE_HAND_2 = 7553,
+  OLM_MELEE_HAND_1 = 7552,
+  OLM_MELEE_HAND_2 = 7555,
+  OLM_HEAD_1 = 7551,
+  OLM_HEAD_2 = 7554,
+
+  // CRABS = 7545,
 }
 
 const MAIDEN_ENTRY_IDS: number[] = [
@@ -297,6 +346,136 @@ export class Npc {
 
   static isBloat(npcId: number): boolean {
     return Npc.BLOAT_IDS.includes(npcId);
+  }
+
+  private static readonly TEKTON_IDS: number[] = [
+    NpcId.TEKTON_1,
+    NpcId.TEKTON_2,
+    NpcId.TEKTON_3,
+    NpcId.TEKTON_4,
+    NpcId.TEKTON_ENRAGED_1,
+    NpcId.TEKTON_ENRAGED_2,
+  ];
+
+  static isTekton(npcId: number): boolean {
+    return Npc.TEKTON_IDS.includes(npcId);
+  }
+
+  private static readonly ICE_DEMON_IDS: number[] = [
+    NpcId.ICE_DEMON_1, 
+    NpcId.ICE_DEMON_2
+  ];
+
+  static isIceDemon(npcId: number): boolean {
+    return Npc.ICE_DEMON_IDS.includes(npcId);
+  }
+
+  private static readonly LIZARDMAN_SHAMAN_IDS: number[] = [
+    NpcId.LIZARDMAN_SHAMAN_1,
+    NpcId.LIZARDMAN_SHAMAN_2,
+  ];
+
+  static isLizardmanShaman(npcId: number): boolean {
+    return Npc.LIZARDMAN_SHAMAN_IDS.includes(npcId);
+  }
+
+  private static readonly VANGUARD_IDS: number[] = [
+    NpcId.VANGUARD_INITIAL,
+    NpcId.VANGUARD_MELEE,
+    NpcId.VANGUARD_RANGED,
+    NpcId.VANGUARD_MAGIC,
+  ];
+
+  static isVanguard(npcId: number): boolean {
+    return Npc.VANGUARD_IDS.includes(npcId);
+  }
+
+  static isCorruptedScavenger(npcId: number): boolean {
+    return npcId === NpcId.CORRUPTED_SCAVENGER;
+  }
+
+  static isAbyssalPortal(npcId: number): boolean {
+    return npcId === NpcId.ABYSSAL_PORTAL;
+  }
+
+  private static readonly GUARDIAN_IDS: number[] = [
+    NpcId.GUARDIAN_1_LIVE,
+    NpcId.GUARDIAN_1_DEAD,
+    NpcId.GUARDIAN_2_LIVE,
+    NpcId.GUARDIAN_2_DEAD,
+  ];
+
+  static isGuardian(npcId: number): boolean {
+    return Npc.GUARDIAN_IDS.includes(npcId);
+  }
+
+  private static readonly VASA_NISTIRIO_IDS: number[] = [
+    NpcId.VASA_NISTIRIO_1,
+    NpcId.VASA_NISTIRIO_2,
+    NpcId.VASA_NISTIRIO_3,
+  ];
+
+  static isVasaNistirio(npcId: number): boolean {
+    return Npc.VASA_NISTIRIO_IDS.includes(npcId);
+  }
+
+  static isGlowingCrystal(npcId: number): boolean {
+    return npcId === NpcId.GLOWING_CRYSTAL;
+  }
+
+  private static readonly SKELETAL_MYSTIC_IDS: number[] = [
+    NpcId.SKELETAL_MYSTIC_1,
+    NpcId.SKELETAL_MYSTIC_2,
+    NpcId.SKELETAL_MYSTIC_3,
+  ];
+
+  static isSkeletalMystic(npcId: number): boolean {
+    return Npc.SKELETAL_MYSTIC_IDS.includes(npcId);
+  }
+
+  private static readonly MUTTADILE_IDS: number[] = [
+    NpcId.MUTTADILE_LARGE_1,
+    NpcId.MUTTADILE_LARGE_2,
+    NpcId.MUTTADILE_SMALL,
+  ];
+
+  static isMuttadile(npcId: number): boolean {
+    return Npc.MUTTADILE_IDS.includes(npcId);
+  }
+
+  private static readonly OLM_MAGE_HAND_IDS: number[] = [
+    NpcId.OLM_MAGE_HAND_1,
+    NpcId.OLM_MAGE_HAND_2,
+  ];
+
+  static isOlmMageHand(npcId: number): boolean {
+    return Npc.OLM_MAGE_HAND_IDS.includes(npcId);
+  }
+
+  private static readonly OLM_MELEE_HAND_IDS: number[] = [
+    NpcId.OLM_MELEE_HAND_1,
+    NpcId.OLM_MELEE_HAND_2,
+  ];
+
+  static isOlmMeleeHand(npcId: number): boolean {
+    return Npc.OLM_MELEE_HAND_IDS.includes(npcId);
+  }
+
+  static isOlmHand(npcId: number): boolean {
+    return Npc.isOlmMageHand(npcId) || Npc.isOlmMeleeHand(npcId);
+  }
+
+  private static readonly OLM_HEAD_IDS: number[] = [
+    NpcId.OLM_HEAD_1,
+    NpcId.OLM_HEAD_2,
+  ];
+
+  static isOlmHead(npcId: number): boolean {
+    return Npc.OLM_HEAD_IDS.includes(npcId);
+  }
+
+  static isOlm(npcId: number): boolean {
+    return Npc.isOlmHand(npcId) || Npc.isOlmHead(npcId);
   }
 
   private static readonly NYLOCAS_ISCHYROS_SMALL_IDS: number[] = [

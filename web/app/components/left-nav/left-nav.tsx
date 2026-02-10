@@ -164,7 +164,22 @@ export function LeftNav() {
               </span>
             </Link>
           </li>
-
+          {/* Cox */}
+          <li className={styles.leftNav__menuItem}>
+            <Link className={styles.leftNav__menuItemInner} href="/raids/cox">
+              <div className={styles.leftNav__menuItemIcon}>
+                <div className={styles.imageWrapper}>
+                  <Image
+                    src="/logo_cox.webp"
+                    alt="cox icon"
+                    fill
+                    style={{ objectFit: 'contain' }}
+                  />
+                </div>
+              </div>
+              <span className="active">CoX</span>
+            </Link>
+          </li>
           {/* Search */}
           <li className={styles.leftNav__menuItem}>
             <Link
