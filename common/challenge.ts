@@ -140,6 +140,10 @@ export interface TobRoom extends StageData {
   deaths: string[];
 }
 
+export interface CoxRoom extends StageData {
+  deaths: string[];
+}
+
 export type ColosseumData = {
   handicaps: Handicap[];
   waves: ColosseumWave[];
@@ -149,6 +153,43 @@ export interface ColosseumWave extends StageData {
   handicap: Handicap;
   options: Handicap[];
 }
+export type CoxChallengeStats = {
+  tektonDeaths: number;
+  crabsDeaths: number;
+  iceDemonDeaths: number;
+  shamansDeaths: number;
+  vanguardsDeaths: number;
+  thievingDeaths: number;
+  vespulaDeaths: number;
+  tightropeDeaths: number;
+  guardiansDeaths: number;
+  vasaDeaths: number;
+  mysticsDeaths: number;
+  muttadileDeaths: number;
+  olmDeaths: number;
+}
+
+export interface CoxRaid extends Challenge {
+  type: ChallengeType.COX;
+  coxRooms: CoxRooms;
+  coxStats: CoxChallengeStats;
+}
+
+export type CoxRooms = {
+  tekton: Nullable<CoxRoom>;
+  crabs: Nullable<CoxRoom>;
+  iceDemon: Nullable<CoxRoom>;
+  shamans: Nullable<CoxRoom>;
+  vanguards: Nullable<CoxRoom>;
+  thieving: Nullable<CoxRoom>;
+  vespula: Nullable<CoxRoom>;
+  tightrope: Nullable<CoxRoom>;
+  guardians: Nullable<CoxRoom>;
+  vasa: Nullable<CoxRoom>;
+  mystics: Nullable<CoxRoom>;
+  muttadile: Nullable<CoxRoom>;
+  olm: Nullable<CoxRoom>;
+};
 
 export const HANDICAP_LEVEL_VALUE_INCREMENT = 30;
 

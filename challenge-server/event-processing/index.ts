@@ -12,6 +12,7 @@ import ChallengeProcessor, {
   InitializedFields,
   type ReportedTimes,
 } from './challenge-processor';
+import ChambersProcessor from './chambers';
 import ColosseumProcessor from './colosseum';
 import InfernoProcessor from './inferno';
 import MokhaiotlProcessor from './mokhaiotl';
@@ -79,6 +80,17 @@ export function newChallengeProcessor(
       );
 
     case ChallengeType.COX:
+      return new ChambersProcessor(
+        dataRepository,
+        priceTracker,
+        uuid,
+        mode,
+        stage,
+        stageStatus,
+        party,
+        extraFields,
+      );
+
     case ChallengeType.TOA:
       throw new Error(`Unimplemented challenge type ${type}`);
 

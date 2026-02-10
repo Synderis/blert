@@ -348,6 +348,82 @@ export enum SplitType {
   INFERNO_WAVE_67_TIME = 301,
   INFERNO_WAVE_68_TIME = 302,
   INFERNO_WAVE_69_TIME = 303,
+
+  // Chambers of Xeric splits.
+  COX_ENTRY_CHALLENGE = 240,
+  COX_REG_CHALLENGE = 241,
+  COX_CM_CHALLENGE = 242,
+  COX_CHALLENGE = COX_ENTRY_CHALLENGE,
+
+  COX_ENTRY_OVERALL = 243,
+  COX_REG_OVERALL = 244,
+  COX_CM_OVERALL = 245,
+  COX_OVERALL = COX_ENTRY_OVERALL,
+
+  COX_ENTRY_TEKTON = 246,
+  COX_REG_TEKTON = 247,
+  COX_CM_TEKTON = 248,
+  COX_TEKTON = COX_ENTRY_TEKTON,
+
+  COX_ENTRY_CRABS = 249,
+  COX_REG_CRABS = 250,
+  COX_CM_CRABS = 251,
+  COX_CRABS = COX_ENTRY_CRABS,
+
+  COX_ENTRY_ICE_DEMON = 252,
+  COX_REG_ICE_DEMON = 253,
+  COX_CM_ICE_DEMON = 254,
+  COX_ICE_DEMON = COX_ENTRY_ICE_DEMON,
+
+  COX_ENTRY_SHAMANS = 255,
+  COX_REG_SHAMANS = 256,
+  COX_CM_SHAMANS = 257,
+  COX_SHAMANS = COX_ENTRY_SHAMANS,
+
+  COX_ENTRY_VANGUARDS = 258,
+  COX_REG_VANGUARDS = 259,
+  COX_CM_VANGUARDS = 260,
+  COX_VANGUARDS = COX_ENTRY_VANGUARDS,
+
+  COX_ENTRY_THIEVING = 261,
+  COX_REG_THIEVING = 262,
+  COX_CM_THIEVING = 263,
+  COX_THIEVING = COX_ENTRY_THIEVING,
+
+  COX_ENTRY_VASA = 264,
+  COX_REG_VASA = 265,
+  COX_CM_VASA = 266,
+  COX_VASA = COX_ENTRY_VASA,
+
+  COX_ENTRY_VESPULA = 267,
+  COX_REG_VESPULA = 268,
+  COX_CM_VESPULA = 269,
+  COX_VESPULA = COX_ENTRY_VESPULA,
+
+  COX_ENTRY_TIGHTROPE = 270,
+  COX_REG_TIGHTROPE = 271,
+  COX_CM_TIGHTROPE = 272,
+  COX_TIGHTROPE = COX_ENTRY_TIGHTROPE,
+
+  COX_ENTRY_GUARDIANS = 273,
+  COX_REG_GUARDIANS = 274,
+  COX_CM_GUARDIANS = 275,
+  COX_GUARDIANS = COX_ENTRY_GUARDIANS,
+
+  COX_ENTRY_MYSTICS = 276,
+  COX_REG_MYSTICS = 277,
+  COX_CM_MYSTICS = 278,
+  COX_MYSTICS = COX_ENTRY_MYSTICS,
+
+  COX_ENTRY_MUTTADILE = 279,
+  COX_REG_MUTTADILE = 280,
+  COX_CM_MUTTADILE = 281,
+  COX_MUTTADILE = COX_ENTRY_MUTTADILE,
+
+  COX_ENTRY_OLM = 282,
+  COX_REG_OLM = 283,
+  COX_CM_OLM = 284,
+  COX_OLM = COX_ENTRY_OLM,
 }
 
 const genericTobSplits = [
@@ -393,6 +469,21 @@ const genericTobSplits = [
   SplitType.TOB_SOTETSEG_START,
   SplitType.TOB_XARPUS_START,
   SplitType.TOB_VERZIK_START,
+  SplitType.COX_CHALLENGE,
+  SplitType.COX_OVERALL,
+  SplitType.COX_TEKTON,
+  SplitType.COX_CRABS,
+  SplitType.COX_ICE_DEMON,
+  SplitType.COX_SHAMANS,
+  SplitType.COX_VANGUARDS,
+  SplitType.COX_THIEVING,
+  SplitType.COX_VASA,
+  SplitType.COX_VESPULA,
+  SplitType.COX_TIGHTROPE,
+  SplitType.COX_GUARDIANS,
+  SplitType.COX_MYSTICS,
+  SplitType.COX_MUTTADILE,
+  SplitType.COX_OLM,
 ];
 
 /**
@@ -429,10 +520,11 @@ export function adjustSplitForMode(
  * @returns The generic split type.
  */
 export function generalizeSplit(split: SplitType): SplitType {
-  if (
-    split >= SplitType.TOB_CHALLENGE &&
-    split <= SplitType.TOB_HM_VERZIK_START
-  ) {
+  if (split >= SplitType.TOB_CHALLENGE && split <= SplitType.TOB_HM_VERZIK_P3) {
+    return split - (split % 3);
+  }
+
+  if (split >= SplitType.COX_CHALLENGE && split <= SplitType.COX_CM_OLM) {
     return split - (split % 3);
   }
 
@@ -689,6 +781,42 @@ export function splitName(
       return full ? 'Inferno Wave 68' : 'Wave 68';
     case SplitType.INFERNO_WAVE_69_START:
       return full ? 'Inferno Wave 69' : 'Wave 69';
+    case SplitType.INFERNO_WAVE_68_TIME:
+      return full ? 'Inferno Wave 68 time' : 'Wave 68 time';
+    case SplitType.INFERNO_WAVE_69_TIME:
+      return full ? 'Inferno Wave 69 time' : 'Wave 69 time';
+
+    case SplitType.COX_CHALLENGE:
+      return full ? 'CoX challenge time' : 'Challenge time';
+    case SplitType.COX_OVERALL:
+      return full ? 'CoX overall time' : 'Overall time';
+    case SplitType.COX_TEKTON:
+      return full ? 'Tekton room time' : 'Tekton';
+    case SplitType.COX_CRABS:
+      return full ? 'Crabs room time' : 'Crabs';
+    case SplitType.COX_ICE_DEMON:
+      return full ? 'Ice Demon room time' : 'Ice Demon';
+    case SplitType.COX_SHAMANS:
+      return full ? 'Shamans room time' : 'Shamans';
+    case SplitType.COX_VANGUARDS:
+      return full ? 'Vanguards room time' : 'Vanguards';
+    case SplitType.COX_THIEVING:
+      return full ? 'Thieving room time' : 'Thieving';
+    case SplitType.COX_VASA:
+      return full ? 'Vasa room time' : 'Vasa';
+    case SplitType.COX_VESPULA:
+      return full ? 'Vespula room time' : 'Vespula';
+    case SplitType.COX_TIGHTROPE:
+      return full ? 'Tightrope room time' : 'Tightrope';
+    case SplitType.COX_GUARDIANS:
+      return full ? 'Guardians room time' : 'Guardians';
+    case SplitType.COX_MYSTICS:
+      return full ? 'Mystics room time' : 'Mystics';
+    case SplitType.COX_MUTTADILE:
+      return full ? 'Muttadile room time' : 'Muttadile';
+    case SplitType.COX_OLM:
+      return full ? 'Olm room time' : 'Olm';
+
     default:
       return 'Unknown split';
   }
@@ -765,6 +893,88 @@ export function splitToStage(split: SplitType): Stage {
     return Stage.INFERNO_WAVE_1 + (generic - SplitType.INFERNO_WAVE_1_TIME);
   }
 
+  if (
+    split >= SplitType.COX_ENTRY_TEKTON &&
+    split <= SplitType.COX_CM_TEKTON
+  ) {
+    return Stage.COX_TEKTON;
+  }
+
+  if (split >= SplitType.COX_ENTRY_CRABS && split <= SplitType.COX_CM_CRABS) {
+    return Stage.COX_CRABS;
+  }
+
+  if (
+    split >= SplitType.COX_ENTRY_ICE_DEMON &&
+    split <= SplitType.COX_CM_ICE_DEMON
+  ) {
+    return Stage.COX_ICE_DEMON;
+  }
+
+  if (
+    split >= SplitType.COX_ENTRY_SHAMANS &&
+    split <= SplitType.COX_CM_SHAMANS
+  ) {
+    return Stage.COX_SHAMANS;
+  }
+
+  if (
+    split >= SplitType.COX_ENTRY_VANGUARDS &&
+    split <= SplitType.COX_CM_VANGUARDS
+  ) {
+    return Stage.COX_VANGUARDS;
+  }
+
+  if (
+    split >= SplitType.COX_ENTRY_THIEVING &&
+    split <= SplitType.COX_CM_THIEVING
+  ) {
+    return Stage.COX_THIEVING;
+  }
+
+  if (split >= SplitType.COX_ENTRY_VASA && split <= SplitType.COX_CM_VASA) {
+    return Stage.COX_VASA;
+  }
+
+  if (
+    split >= SplitType.COX_ENTRY_VESPULA &&
+    split <= SplitType.COX_CM_VESPULA
+  ) {
+    return Stage.COX_VESPULA;
+  }
+
+  if (
+    split >= SplitType.COX_ENTRY_TIGHTROPE &&
+    split <= SplitType.COX_CM_TIGHTROPE
+  ) {
+    return Stage.COX_TIGHTROPE;
+  }
+
+  if (
+    split >= SplitType.COX_ENTRY_GUARDIANS &&
+    split <= SplitType.COX_CM_GUARDIANS
+  ) {
+    return Stage.COX_GUARDIANS;
+  }
+
+  if (
+    split >= SplitType.COX_ENTRY_MYSTICS &&
+    split <= SplitType.COX_CM_MYSTICS
+  ) {
+    return Stage.COX_MYSTICS;
+  }
+
+  if (
+    split >= SplitType.COX_ENTRY_MUTTADILE &&
+    split <= SplitType.COX_CM_MUTTADILE
+  ) {
+    return Stage.COX_MUTTADILE;
+  }
+
+  if (split >= SplitType.COX_ENTRY_OLM && split <= SplitType.COX_CM_OLM) {
+    return Stage.COX_OLM;
+  }
+
   return Stage.UNKNOWN;
 }
 
@@ -825,4 +1035,20 @@ export const RELEVANT_PB_SPLITS: SplitType[] = [
   SplitType.MOKHAIOTL_DELVE_6,
   SplitType.MOKHAIOTL_DELVE_7,
   SplitType.MOKHAIOTL_DELVE_8,
+
+  SplitType.COX_CHALLENGE,
+  SplitType.COX_OVERALL,
+  SplitType.COX_TEKTON,
+  SplitType.COX_CRABS,
+  SplitType.COX_ICE_DEMON,
+  SplitType.COX_SHAMANS,
+  SplitType.COX_VANGUARDS,
+  SplitType.COX_THIEVING,
+  SplitType.COX_VASA,
+  SplitType.COX_VESPULA,
+  SplitType.COX_TIGHTROPE,
+  SplitType.COX_GUARDIANS,
+  SplitType.COX_MYSTICS,
+  SplitType.COX_MUTTADILE,
+  SplitType.COX_OLM,
 ].flatMap((s) => allSplitModes(s));

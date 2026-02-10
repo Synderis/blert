@@ -2,7 +2,7 @@ import { S3Client } from '@aws-sdk/client-s3';
 import { Sql } from 'postgres';
 
 import { DataRepository } from '../data-repository/data-repository';
-import { ChallengeType, ColosseumData, TobRooms } from '../challenge';
+import { ChallengeType, ColosseumData, CoxRooms, TobRooms } from '../challenge';
 import { ChallengeRow } from '../db/challenge';
 
 /**
@@ -79,7 +79,7 @@ export async function forEachChallengeWithData(
   dataRepository: DataRepository,
   callback: (
     challenge: ChallengeRow,
-    data: TobRooms | ColosseumData,
+    data: TobRooms | ColosseumData | CoxRooms,
   ) => Promise<void>,
   options: ForEachChallengeOptions = {},
 ) {
@@ -119,7 +119,7 @@ export async function forEachChallengeWithData(
     }
 
     const promises = challenges.map(async (challenge) => {
-      let data: TobRooms | ColosseumData;
+      let data: TobRooms | ColosseumData | CoxRooms;
       switch (challenge.type) {
         case ChallengeType.TOB:
           data = await dataRepository.loadTobChallengeData(challenge.uuid);
@@ -128,6 +128,9 @@ export async function forEachChallengeWithData(
           data = await dataRepository.loadColosseumChallengeData(
             challenge.uuid,
           );
+          break;
+        case ChallengeType.COX:
+          data = await dataRepository.loadCoxChallengeData(challenge.uuid);
           break;
         default:
           return;
