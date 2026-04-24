@@ -217,12 +217,16 @@ export enum NpcId {
   LIZARDMAN_SHAMAN_2 = 7574,
 
   VANGUARD_INITIAL = 7525,
+  VANGUARD_DIG = 7526,
   VANGUARD_MELEE = 7527,
   VANGUARD_RANGED = 7528,
   VANGUARD_MAGIC = 7529,
 
   CORRUPTED_SCAVENGER = 7602,
   ABYSSAL_PORTAL = 7533,
+
+  DEATHLY_RANGER = 7559,
+  DEATHLY_MAGE = 7560,
 
   GUARDIAN_1_LIVE = 7569,
   GUARDIAN_1_DEAD = 7571,
@@ -381,6 +385,7 @@ export class Npc {
 
   private static readonly VANGUARD_IDS: number[] = [
     NpcId.VANGUARD_INITIAL,
+    NpcId.VANGUARD_DIG,
     NpcId.VANGUARD_MELEE,
     NpcId.VANGUARD_RANGED,
     NpcId.VANGUARD_MAGIC,
@@ -396,6 +401,15 @@ export class Npc {
 
   static isAbyssalPortal(npcId: number): boolean {
     return npcId === NpcId.ABYSSAL_PORTAL;
+  }
+
+  private static readonly DEATHLY_IDS: number[] = [
+    NpcId.DEATHLY_RANGER,
+    NpcId.DEATHLY_MAGE,
+  ];
+
+  static isDeathly(npcId: number): boolean {
+    return Npc.DEATHLY_IDS.includes(npcId);
   }
 
   private static readonly GUARDIAN_IDS: number[] = [

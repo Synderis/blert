@@ -4,6 +4,7 @@ import {
   Challenge,
   ChallengeType,
   ColosseumChallenge,
+  CoxRaid,
   InfernoChallenge,
   MokhaiotlChallenge,
   Stage,
@@ -80,6 +81,93 @@ const TOB_NAV_ITEMS: NavItem[] = [
     path: 'verzik',
     label: 'Verzik',
     stage: Stage.TOB_VERZIK,
+    icon: <VerzikIcon height={24} width={24} />,
+  },
+];
+
+const COX_NAV_ITEMS: NavItem[] = [
+  {
+    path: 'overview',
+    label: 'Overview',
+    stage: Stage.UNKNOWN,
+    icon: <i className="fa-solid fa-list" />,
+  },
+  {
+    path: 'tekton',
+    label: 'Tekton',
+    stage: Stage.COX_TEKTON,
+    icon: <MaidenIcon height={24} width={24} />,
+  },
+  {
+    path: 'crabs',
+    label: 'Crabs',
+    stage: Stage.COX_CRABS,
+    icon: <NylocasIcon height={24} width={24} />,
+  },
+  {
+    path: 'ice-demon',
+    label: 'Ice Demon',
+    stage: Stage.COX_ICE_DEMON,
+    icon: <SotetsegIcon height={24} width={24} />,
+  },
+  {
+    path: 'shamans',
+    label: 'Shamans',
+    stage: Stage.COX_SHAMANS,
+    icon: <XarpusIcon height={24} width={24} />,
+  },
+  {
+    path: 'vanguards',
+    label: 'Vanguards',
+    stage: Stage.COX_VANGUARDS,
+    icon: <VerzikIcon height={24} width={24} />,
+  },
+  {
+    path: 'thieving',
+    label: 'Thieving',
+    stage: Stage.COX_THIEVING,
+    icon: <VerzikIcon height={24} width={24} />,
+  },
+  {
+    path: 'vespula',
+    label: 'Vespula',
+    stage: Stage.COX_VESPULA,
+    icon: <VerzikIcon height={24} width={24} />,
+  },
+  {
+    path: 'tightrope',
+    label: 'Tightrope',
+    stage: Stage.COX_TIGHTROPE,
+    icon: <VerzikIcon height={24} width={24} />,
+  },
+  {
+    path: 'guardians',
+    label: 'Guardians',
+    stage: Stage.COX_GUARDIANS,
+    icon: <VerzikIcon height={24} width={24} />,
+  },
+  {
+    path: 'vasa',
+    label: 'Vasa',
+    stage: Stage.COX_VASA,
+    icon: <VerzikIcon height={24} width={24} />,
+  },
+  {
+    path: 'mystics',
+    label: 'Mystics',
+    stage: Stage.COX_MYSTICS,
+    icon: <VerzikIcon height={24} width={24} />,
+  },
+  {
+    path: 'muttadile',
+    label: 'Muttadile',
+    stage: Stage.COX_MUTTADILE,
+    icon: <VerzikIcon height={24} width={24} />,
+  },
+  {
+    path: 'olm',
+    label: 'Olm',
+    stage: Stage.COX_OLM,
     icon: <VerzikIcon height={24} width={24} />,
   },
 ];
@@ -883,6 +971,9 @@ export default function ChallengeNav({ challengeId }: ChallengeNavProps) {
     case ChallengeType.MOKHAIOTL:
       navItems = MOKHAIOTL_NAV_ITEMS;
       break;
+    case ChallengeType.COX:
+      navItems = COX_NAV_ITEMS;
+      break;
   }
 
   const isStageAccessible = (stage: Stage): boolean => {
@@ -907,6 +998,40 @@ export default function ChallengeNav({ challengeId }: ChallengeNavProps) {
             return !!rooms.xarpus;
           case Stage.TOB_VERZIK:
             return !!rooms.verzik;
+          default:
+            return false;
+        }
+      }
+      case ChallengeType.COX: {
+        const rooms = (challenge as CoxRaid).coxRooms;
+
+        switch (stage) {
+          case Stage.COX_TEKTON:
+            return !!rooms.tekton;
+          case Stage.COX_CRABS:
+            return !!rooms.crabs;
+          case Stage.COX_ICE_DEMON:
+            return !!rooms.iceDemon;
+          case Stage.COX_SHAMANS:
+            return !!rooms.shamans;
+          case Stage.COX_VANGUARDS:
+            return !!rooms.vanguards;
+          case Stage.COX_THIEVING:
+            return !!rooms.thieving;
+          case Stage.COX_VESPULA:
+            return !!rooms.vespula;
+          case Stage.COX_TIGHTROPE:
+            return !!rooms.tightrope;
+          case Stage.COX_GUARDIANS:
+            return !!rooms.guardians;
+          case Stage.COX_VASA:
+            return !!rooms.vasa;
+          case Stage.COX_MYSTICS:
+            return !!rooms.mystics;
+          case Stage.COX_MUTTADILE:
+            return !!rooms.muttadile;
+          case Stage.COX_OLM:
+            return !!rooms.olm;
           default:
             return false;
         }

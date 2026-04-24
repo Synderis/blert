@@ -3,37 +3,128 @@
 import {
   ChallengeStatus,
   CoxRaid,
+  EventType,
+  Npc,
+  SkillLevel,
   Stage,
 } from '@blert/common';
 
-import { useContext } from 'react';
+import { useContext, useMemo } from 'react';
 
+// import { TimelineColor } from '@/components/attack-timeline';
 import BossFightOverview from '@/components/boss-fight-overview';
 import BossPageAttackTimeline from '@/components/boss-page-attack-timeline';
 import BossPageControls from '@/components/boss-page-controls';
+import BossPageDPSTimeline from '@/components/boss-page-dps-timeline';
 import BossPageParty from '@/components/boss-page-party';
+import BossPageReplay from '@/components/boss-page-replay';
+import Card from '@/components/card';
+import { MapDefinition } from '@/components/map-renderer';
 import Loading from '@/components/loading';
+import { useDisplay } from '@/display';
 import { ActorContext } from '@/(challenges)/raids/cox/context';
 import {
+  EnhancedRoomNpc,
+  useMapEntities,
   usePlayingState,
   useStageEvents,
 } from '@/utils/boss-room-state';
 
 import bossStyles from '../style.module.scss';
 
+const TIGHTROPE_MAP_DEFINITION: MapDefinition = {
+  baseX: 3300,
+  baseY: 5343,
+  width: 28,
+  height: 30,
+  plane: 1,
+};
+
 export default function TightropePage() {
+  const display = useDisplay();
+
+  const compact = display.isCompact();
+
   const {
     challenge,
     totalTicks,
+    events,
     playerState,
     npcState,
     loading,
   } = useStageEvents<CoxRaid>(Stage.COX_TIGHTROPE);
 
-  const { currentTick, setTick, playing, setPlaying } =
+  const { currentTick, setTick, playing, setPlaying, advanceTick } =
     usePlayingState(totalTicks);
 
+  const mapDefinition = useMemo(() => {
+    const initialZoom = compact ? 10 : 18;
+    return {
+      ...TIGHTROPE_MAP_DEFINITION,
+      initialZoom,
+    };
+  }, [compact]);
+
   const { setSelectedPlayer, selectedPlayer } = useContext(ActorContext);
+
+  const bossHealthChartData = useMemo(() => {
+    let deathlyNPC: EnhancedRoomNpc | null = null;
+    const iter = npcState.values();
+    for (let npc = iter.next(); !npc.done; npc = iter.next()) {
+      if (Npc.isDeathly(npc.value.spawnNpcId)) {
+        deathlyNPC = npc.value;
+        break;
+      }
+    }
+
+    if (deathlyNPC !== null) {
+      return deathlyNPC.stateByTick.map((state, tick) => ({
+        tick,
+        bossHealthPercentage: state?.hitpoints.percentage() ?? 0,
+      }));
+    }
+
+    const healthByTick = new Map<number, number>();
+    for (const event of events) {
+      if (
+        event.type === EventType.NPC_UPDATE &&
+        event.npc !== undefined &&
+        Npc.isDeathly(event.npc.id)
+      ) {
+        healthByTick.set(
+          event.tick,
+          SkillLevel.fromRaw(event.npc.hitpoints).percentage(),
+        );
+      }
+    }
+
+    if (healthByTick.size === 0) {
+      return [];
+    }
+
+    const maxTick = Math.max(...healthByTick.keys());
+    const chartData = [];
+    let lastHealth = 0;
+    for (let tick = 0; tick <= maxTick; tick++) {
+      const healthAtTick = healthByTick.get(tick);
+      if (healthAtTick !== undefined) {
+        lastHealth = healthAtTick;
+      }
+      chartData.push({
+        tick,
+        bossHealthPercentage: lastHealth,
+      });
+    }
+
+    return chartData;
+  }, [events, npcState]);
+
+  const { entitiesByTick, preloads } = useMapEntities(
+    challenge,
+    playerState,
+    npcState,
+    totalTicks,
+  );
 
   if (loading || challenge === null) {
     return <Loading />;
@@ -98,14 +189,35 @@ export default function TightropePage() {
       </div>
 
       <div className={bossStyles.replayAndParty}>
-        <div style={{ padding: '20px', textAlign: 'center' }}>
-          <p>Map replay coming soon</p>
-        </div>
+        <BossPageReplay
+          entities={entitiesByTick.get(currentTick) ?? []}
+          preloads={preloads}
+          mapDef={mapDefinition}
+          playing={playing}
+          width={display.isCompact() ? 352 : 550}
+          height={display.isCompact() ? 352 : 550}
+          currentTick={currentTick}
+          advanceTick={advanceTick}
+        />
         <BossPageParty
           playerTickState={playerTickState}
           selectedPlayer={selectedPlayer}
           setSelectedPlayer={setSelectedPlayer}
         />
+      </div>
+
+      <div className={bossStyles.charts}>
+        <Card
+          className={bossStyles.chart}
+          header={{ title: "Tightrope NPC's Health By Tick" }}
+        >
+          <BossPageDPSTimeline
+            currentTick={currentTick}
+            data={bossHealthChartData}
+            width="100%"
+            height="100%"
+          />
+        </Card>
       </div>
 
       <BossPageControls

@@ -8,6 +8,8 @@ import {
   ChallengeStatus,
   ChallengeType,
   ColosseumChallenge,
+  CoxChallengeStats,
+  CoxRaid,
   DataRepository,
   Event,
   EventType,
@@ -155,6 +157,26 @@ export async function loadChallenge(
       break;
     }
 
+    case ChallengeType.COX: {
+      const raid = challenge as CoxRaid;
+
+      await Promise.all([
+        dataRepository.loadCoxChallengeData(id),
+        sql`
+          SELECT *
+          FROM cox_challenge_stats
+          WHERE challenge_id = ${rawChallenge.id}
+        `,
+      ]).then(([coxData, [stats]]) => {
+        raid.coxRooms = coxData;
+        if (stats) {
+          raid.coxStats = statsObject(stats);
+        }
+      });
+
+      break;
+    }
+
     case ChallengeType.COLOSSEUM:
       (challenge as ColosseumChallenge).colosseum =
         await dataRepository.loadColosseumChallengeData(id);
@@ -200,7 +222,7 @@ function statsTableAndField(type: ChallengeType): {
   table: string;
   field: keyof Pick<
     SessionChallenge,
-    'tobStats' | 'mokhaiotlStats' | 'infernoStats'
+    'tobStats' | 'mokhaiotlStats' | 'infernoStats' | 'coxStats'
   >;
 } | null {
   switch (type) {
@@ -210,6 +232,8 @@ function statsTableAndField(type: ChallengeType): {
       return { table: 'mokhaiotl_challenge_stats', field: 'mokhaiotlStats' };
     case ChallengeType.INFERNO:
       return { table: 'inferno_challenge_stats', field: 'infernoStats' };
+    case ChallengeType.COX:
+      return { table: 'cox_challenge_stats', field: 'coxStats' };
     default:
       return null;
   }
@@ -218,7 +242,8 @@ function statsTableAndField(type: ChallengeType): {
 type StatsObject =
   | TobChallengeStats
   | MokhaiotlChallengeStats
-  | InfernoChallengeStats;
+  | InfernoChallengeStats
+  | CoxChallengeStats;
 
 function statsObject<T extends StatsObject>(rawRow: Record<string, any>): T {
   delete rawRow.id;
@@ -251,7 +276,8 @@ export type ChallengeOverview = Pick<
 } & Partial<
     Pick<TobRaid, 'tobStats'> &
       Pick<MokhaiotlChallenge, 'mokhaiotlStats'> &
-      Pick<InfernoChallenge, 'infernoStats'>
+      Pick<InfernoChallenge, 'infernoStats'> &
+      Pick<CoxRaid, 'coxStats'>
   >;
 
 type SortDirection = '+' | '-';
@@ -881,6 +907,23 @@ export async function findChallenges(
             delete s.id;
             delete s.challenge_id;
             extra[challengeId].infernoStats = snakeToCamelObject(s);
+          });
+        }),
+      );
+    }
+
+    if (types.has(ChallengeType.COX )) {
+      loadPromises.push(
+        sql<({ challenge_id?: number; id?: number } & CoxChallengeStats)[]>`
+          SELECT *
+          FROM cox_challenge_stats
+          WHERE challenge_id = ANY(${types.get(ChallengeType.COX)!})
+        `.then((stats) => {
+          stats.forEach((s) => {
+            const challengeId = s.challenge_id!;
+            delete s.id;
+            delete s.challenge_id;
+            extra[challengeId].coxStats = snakeToCamelObject(s);
           });
         }),
       );
@@ -1571,6 +1614,7 @@ export async function loadSessionWithStats(
         | 'tobStats'
         | 'mokhaiotlStats'
         | 'infernoStats'
+        | 'coxStats'
       >
     >
   >((acc, c) => {
@@ -1684,7 +1728,7 @@ export async function loadSessionWithStats(
 
   for (const stat of challengeStats) {
     const challengeId = stat.challenge_id;
-    // @ts-expect-error `stat` is guaranteed to have the correct type.
+    //// @ts-expect-error `stat` is guaranteed to have the correct type.
     extraChallengeData[challengeId][statsMeta!.field] = statsObject(stat);
   }
 
@@ -2281,6 +2325,9 @@ export async function loadPlayerWithStats(
       tobCompletions: playerWithStats.tob_completions,
       tobWipes: playerWithStats.tob_wipes,
       tobResets: playerWithStats.tob_resets,
+      coxCompletions: playerWithStats.cox_completions,
+      coxWipes: playerWithStats.cox_wipes,
+      coxResets: playerWithStats.cox_resets,
       colosseumCompletions: playerWithStats.colosseum_completions,
       colosseumWipes: playerWithStats.colosseum_wipes,
       colosseumResets: playerWithStats.colosseum_resets,

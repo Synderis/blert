@@ -21,6 +21,8 @@ import {
 } from '../generated/event_pb';
 import {
   ColosseumData,
+  CoxRoom,
+  CoxRooms,
   InfernoData,
   MaidenCrab,
   MokhaiotlData,
@@ -166,6 +168,83 @@ export class DataRepository {
     );
   }
 
+  public async saveCoxChallengeData(
+    uuid: string,
+    coxRooms: CoxRooms,
+  ): Promise<void> {
+    const challengeData = new ChallengeData();
+    challengeData.setChallengeId(uuid);
+    const coxData = new ChallengeData.CoxRooms();
+
+    const setSharedRoomData = (coxRoom: CoxRoom): ChallengeData.CoxRoom => {
+      const room = new ChallengeData.CoxRoom();
+      room.setStage(coxRoom.stage as Proto<StageMap>);
+      room.setTicksLost(coxRoom.ticksLost);
+      room.setDeathsList(coxRoom.deaths);
+      room.setNpcsList(npcsToProto(coxRoom.npcs));
+      return room;
+    };
+
+    if (coxRooms.tekton !== null) {
+      coxData.setTekton(setSharedRoomData(coxRooms.tekton));
+    }
+
+    if (coxRooms.crabs !== null) {
+      coxData.setCrabs(setSharedRoomData(coxRooms.crabs));
+    }
+
+    if (coxRooms.iceDemon !== null) {
+      coxData.setIceDemon(setSharedRoomData(coxRooms.iceDemon));
+    }
+
+    if (coxRooms.shamans !== null) {
+      coxData.setShamans(setSharedRoomData(coxRooms.shamans));
+    }
+
+    if (coxRooms.vanguards !== null) {
+      coxData.setVanguards(setSharedRoomData(coxRooms.vanguards));
+    }
+
+    if (coxRooms.thieving !== null) {
+      coxData.setThieving(setSharedRoomData(coxRooms.thieving));
+    }
+
+    if (coxRooms.vasa !== null) {
+      coxData.setVasa(setSharedRoomData(coxRooms.vasa));
+    }
+
+    if (coxRooms.vespula !== null) {
+      coxData.setVespula(setSharedRoomData(coxRooms.vespula));
+    }
+
+    if (coxRooms.tightrope !== null) {
+      coxData.setTightrope(setSharedRoomData(coxRooms.tightrope));
+    }
+
+    if (coxRooms.guardians !== null) {
+      coxData.setGuardians(setSharedRoomData(coxRooms.guardians));
+    }
+
+    if (coxRooms.mystics !== null) {
+      coxData.setMystics(setSharedRoomData(coxRooms.mystics));
+    }
+
+    if (coxRooms.muttadile !== null) {
+      coxData.setMuttadile(setSharedRoomData(coxRooms.muttadile));
+    }
+
+    if (coxRooms.olm !== null) {
+      coxData.setOlm(setSharedRoomData(coxRooms.olm));
+    }
+
+    challengeData.setCoxRooms(coxData);
+    await this.backend.saveChallengeFile(
+      uuid,
+      DataRepository.CHALLENGE_FILE,
+      challengeData,
+    );
+  }
+
   public async saveColosseumChallengeData(
     uuid: string,
     colosseumData: ColosseumData,
@@ -261,6 +340,16 @@ export class DataRepository {
     }
 
     return this.parseTobRooms(challengeData);
+  }
+
+  public async loadCoxChallengeData(uuid: string): Promise<CoxRooms> {
+    const challengeData = await this.loadChallengeDataProto(uuid);
+
+    if (!challengeData.hasCoxRooms()) {
+      throw new DataRepository.InvalidType();
+    }
+
+    return this.parseCoxRooms(challengeData);
   }
 
   public async loadColosseumChallengeData(
@@ -451,6 +540,160 @@ export class DataRepository {
     return tobRooms;
   }
 
+  private parseCoxRooms(data: ChallengeData): CoxRooms {
+    const coxRooms: CoxRooms = {
+      tekton: null,
+      crabs: null,
+      iceDemon: null,
+      shamans: null,
+      vanguards: null,
+      thieving: null,
+      vespula: null,
+      tightrope: null,
+      guardians: null,
+      vasa: null,
+      mystics: null,
+      muttadile: null,
+      olm: null,
+    };
+
+    if (data.hasCoxRooms()) {
+      const coxData = data.getCoxRooms()!;
+
+      if (coxData.hasTekton()) {
+        const tekton = coxData.getTekton()!;
+        coxRooms.tekton = {
+          stage: Stage.COX_TEKTON,
+          ticksLost: tekton.getTicksLost(),
+          deaths: tekton.getDeathsList(),
+          npcs: npcsFromProto(tekton.getNpcsList()),
+        };
+      }
+
+      if (coxData.hasCrabs()) {
+        const crabs = coxData.getCrabs()!;
+        coxRooms.crabs = {
+          stage: Stage.COX_CRABS,
+          ticksLost: crabs.getTicksLost(),
+          deaths: crabs.getDeathsList(),
+          npcs: npcsFromProto(crabs.getNpcsList()),
+        };
+      }
+
+      if (coxData.hasIceDemon()) {
+        const iceDemon = coxData.getIceDemon()!;
+        coxRooms.iceDemon = {
+          stage: Stage.COX_ICE_DEMON,
+          ticksLost: iceDemon.getTicksLost(),
+          deaths: iceDemon.getDeathsList(),
+          npcs: npcsFromProto(iceDemon.getNpcsList()),
+        };
+      }
+
+      if (coxData.hasShamans()) {
+        const shamans = coxData.getShamans()!;
+        coxRooms.shamans = {
+          stage: Stage.COX_SHAMANS,
+          ticksLost: shamans.getTicksLost(),
+          deaths: shamans.getDeathsList(),
+          npcs: npcsFromProto(shamans.getNpcsList()),
+        };
+      }
+
+      if (coxData.hasVanguards()) {
+        const vanguards = coxData.getVanguards()!;
+        coxRooms.vanguards = {
+          stage: Stage.COX_VANGUARDS,
+          ticksLost: vanguards.getTicksLost(),
+          deaths: vanguards.getDeathsList(),
+          npcs: npcsFromProto(vanguards.getNpcsList()),
+        };
+      }
+
+      if (coxData.hasThieving()) {
+        const thieving = coxData.getThieving()!;
+        coxRooms.thieving = {
+          stage: Stage.COX_THIEVING,
+          ticksLost: thieving.getTicksLost(),
+          deaths: thieving.getDeathsList(),
+          npcs: npcsFromProto(thieving.getNpcsList()),
+        };
+      }
+
+      if (coxData.hasVespula()) {
+        const vespula = coxData.getVespula()!;
+        coxRooms.vespula = {
+          stage: Stage.COX_VESPULA,
+          ticksLost: vespula.getTicksLost(),
+          deaths: vespula.getDeathsList(),
+          npcs: npcsFromProto(vespula.getNpcsList()),
+        };
+      }
+
+      if (coxData.hasTightrope()) {
+        const tightrope = coxData.getTightrope()!;
+        coxRooms.tightrope = {
+          stage: Stage.COX_TIGHTROPE,
+          ticksLost: tightrope.getTicksLost(),
+          deaths: tightrope.getDeathsList(),
+          npcs: npcsFromProto(tightrope.getNpcsList()),
+        };
+      }
+
+      if (coxData.hasGuardians()) {
+        const guardians = coxData.getGuardians()!;
+        coxRooms.guardians = {
+          stage: Stage.COX_GUARDIANS,
+          ticksLost: guardians.getTicksLost(),
+          deaths: guardians.getDeathsList(),
+          npcs: npcsFromProto(guardians.getNpcsList()),
+        };
+      }
+
+      if (coxData.hasVasa()) {
+        const vasa = coxData.getVasa()!;
+        coxRooms.vasa = {
+          stage: Stage.COX_VASA,
+          ticksLost: vasa.getTicksLost(),
+          deaths: vasa.getDeathsList(),
+          npcs: npcsFromProto(vasa.getNpcsList()),
+        };
+      }
+
+      if (coxData.hasMystics()) {
+        const mystics = coxData.getMystics()!;
+        coxRooms.mystics = {
+          stage: Stage.COX_MYSTICS,
+          ticksLost: mystics.getTicksLost(),
+          deaths: mystics.getDeathsList(),
+          npcs: npcsFromProto(mystics.getNpcsList()),
+        };
+      }
+
+      if (coxData.hasMuttadile()) {
+        const muttadile = coxData.getMuttadile()!;
+        coxRooms.muttadile = {
+          stage: Stage.COX_MUTTADILE,
+          ticksLost: muttadile.getTicksLost(),
+          deaths: muttadile.getDeathsList(),
+          npcs: npcsFromProto(muttadile.getNpcsList()),
+        };
+      }
+
+      if (coxData.hasOlm()) {
+        const olm = coxData.getOlm()!;
+        coxRooms.olm = {
+          stage: Stage.COX_OLM,
+          ticksLost: olm.getTicksLost(),
+          deaths: olm.getDeathsList(),
+          npcs: npcsFromProto(olm.getNpcsList()),
+        };
+      }
+    }
+
+    return coxRooms;
+  }
+
   public async deleteDirectory(path: string): Promise<void> {
     await this.backend.deleteDir(path);
   }
@@ -568,6 +811,45 @@ export class DataRepository {
         break;
       case Stage.TOB_VERZIK:
         fileName = 'verzik';
+        break;
+      case Stage.COX_TEKTON:
+        fileName = 'tekton';
+        break;
+      case Stage.COX_CRABS:
+        fileName = 'crabs';
+        break;
+      case Stage.COX_ICE_DEMON:
+        fileName = 'ice-demon';
+        break;
+      case Stage.COX_SHAMANS:
+        fileName = 'shamans';
+        break;
+      case Stage.COX_VANGUARDS:
+        fileName = 'vanguards';
+        break;
+      case Stage.COX_THIEVING:
+        fileName = 'thieving';
+        break;
+      case Stage.COX_VESPULA:
+        fileName = 'vespula';
+        break;
+      case Stage.COX_TIGHTROPE:
+        fileName = 'tightrope';
+        break;
+      case Stage.COX_GUARDIANS:
+        fileName = 'guardians';
+        break;
+      case Stage.COX_VASA:
+        fileName = 'vasa';
+        break;
+      case Stage.COX_MYSTICS:
+        fileName = 'mystics';
+        break;
+      case Stage.COX_MUTTADILE:
+        fileName = 'muttadile';
+        break;
+      case Stage.COX_OLM:
+        fileName = 'olm';
         break;
       case Stage.COLOSSEUM_WAVE_1:
       case Stage.COLOSSEUM_WAVE_2:
