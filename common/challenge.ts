@@ -356,14 +356,17 @@ export enum Stage {
   COX_CRABS = StageProto.COX_CRABS,
   COX_ICE_DEMON = StageProto.COX_ICE_DEMON,
   COX_SHAMANS = StageProto.COX_SHAMANS,
+  COX_FLOOR_1 = StageProto.COX_FLOOR_1,
   COX_VANGUARDS = StageProto.COX_VANGUARDS,
   COX_THIEVING = StageProto.COX_THIEVING,
   COX_VESPULA = StageProto.COX_VESPULA,
   COX_TIGHTROPE = StageProto.COX_TIGHTROPE,
+  COX_FLOOR_2 = StageProto.COX_FLOOR_2,
   COX_GUARDIANS = StageProto.COX_GUARDIANS,
   COX_VASA = StageProto.COX_VASA,
   COX_MYSTICS = StageProto.COX_MYSTICS,
   COX_MUTTADILE = StageProto.COX_MUTTADILE,
+  COX_FLOOR_3 = StageProto.COX_FLOOR_3,
   COX_OLM = StageProto.COX_OLM,
 
   TOA_APMEKEN = StageProto.TOA_APMEKEN,
@@ -1032,6 +1035,8 @@ export function stageName(stage: Stage, short: boolean = false): string {
       return 'Ice Demon';
     case Stage.COX_SHAMANS:
       return 'Shamans';
+    case Stage.COX_FLOOR_1:
+      return 'Floor 1';
     case Stage.COX_VANGUARDS:
       return 'Vanguards';
     case Stage.COX_THIEVING:
@@ -1040,6 +1045,8 @@ export function stageName(stage: Stage, short: boolean = false): string {
       return 'Vespula';
     case Stage.COX_TIGHTROPE:
       return 'Tightrope';
+    case Stage.COX_FLOOR_2:
+      return 'Floor 2';
     case Stage.COX_GUARDIANS:
       return 'Guardians';
     case Stage.COX_VASA:
@@ -1048,6 +1055,8 @@ export function stageName(stage: Stage, short: boolean = false): string {
       return 'Mystics';
     case Stage.COX_MUTTADILE:
       return 'Muttadile';
+    case Stage.COX_FLOOR_3:
+      return 'Floor 3';
     case Stage.COX_OLM:
       return 'Olm';
 
@@ -1237,14 +1246,17 @@ export type CoxStage =
   | Stage.COX_CRABS
   | Stage.COX_ICE_DEMON
   | Stage.COX_SHAMANS
+  | Stage.COX_FLOOR_1
   | Stage.COX_VANGUARDS
   | Stage.COX_THIEVING
   | Stage.COX_VESPULA
   | Stage.COX_TIGHTROPE
+  | Stage.COX_FLOOR_2
   | Stage.COX_GUARDIANS
   | Stage.COX_VASA
   | Stage.COX_MYSTICS
   | Stage.COX_MUTTADILE
+  | Stage.COX_FLOOR_3
   | Stage.COX_OLM;
 
 /**

@@ -726,6 +726,176 @@ const EARTHEN_SHIELD: NpcDefinition = {
   maxSpeed: 1,
 };
 
+const TEKTON: NpcDefinition = {
+  fullName: 'Tekton',
+  shortName: 'Tekton',
+  canonicalId: NpcId.TEKTON_1,
+  semanticId: false,
+  size: 4,
+  mode: ChallengeMode.NO_MODE,
+  maxSpeed: 1,
+};
+
+const ICE_DEMON: NpcDefinition = {
+  fullName: 'Ice Demon',
+  shortName: 'Ice Demon',
+  canonicalId: NpcId.ICE_DEMON_1,
+  semanticId: false,
+  size: 5,
+  mode: ChallengeMode.NO_MODE,
+  maxSpeed: 0,
+};
+
+const LIZARDMAN_SHAMAN: NpcDefinition = {
+  fullName: 'Lizardman Shaman',
+  shortName: 'Shaman',
+  canonicalId: NpcId.LIZARDMAN_SHAMAN_1,
+  semanticId: false,
+  size: 2,
+  mode: ChallengeMode.NO_MODE,
+  maxSpeed: 1,
+};
+
+const VANGUARD: NpcDefinition = {
+  fullName: 'Vanguard',
+  shortName: 'Vanguard',
+  canonicalId: NpcId.VANGUARD_MELEE,
+  semanticId: true,
+  size: 4,
+  mode: ChallengeMode.NO_MODE,
+  maxSpeed: 1,
+};
+
+const CORRUPTED_SCAVENGER: NpcDefinition = {
+  fullName: 'Corrupted scavenger',
+  shortName: 'Scavenger',
+  canonicalId: NpcId.CORRUPTED_SCAVENGER,
+  semanticId: false,
+  size: 2,
+  mode: ChallengeMode.NO_MODE,
+  maxSpeed: 1,
+};
+
+const ABYSSAL_PORTAL: NpcDefinition = {
+  fullName: 'Abyssal portal',
+  shortName: 'Portal',
+  canonicalId: NpcId.ABYSSAL_PORTAL,
+  semanticId: false,
+  size: 3,
+  mode: ChallengeMode.NO_MODE,
+  maxSpeed: 0,
+};
+
+const DEATHLY_RANGER: NpcDefinition = {
+  fullName: 'Deathly ranger',
+  shortName: 'Ranger',
+  canonicalId: NpcId.DEATHLY_RANGER,
+  semanticId: false,
+  size: 1,
+  mode: ChallengeMode.NO_MODE,
+  maxSpeed: 0,
+};
+
+const DEATHLY_MAGE: NpcDefinition = {
+  fullName: 'Deathly mage',
+  shortName: 'Mage',
+  canonicalId: NpcId.DEATHLY_MAGE,
+  semanticId: false,
+  size: 1,
+  mode: ChallengeMode.NO_MODE,
+  maxSpeed: 0,
+};
+
+const GUARDIAN: NpcDefinition = {
+  fullName: 'Great Olm (Guardian)',
+  shortName: 'Guardian',
+  canonicalId: NpcId.GUARDIAN_1_LIVE,
+  semanticId: true,
+  size: 5,
+  mode: ChallengeMode.NO_MODE,
+  maxSpeed: 0,
+};
+
+const VASA_NISTIRIO: NpcDefinition = {
+  fullName: 'Vasa Nistirio',
+  shortName: 'Vasa',
+  canonicalId: NpcId.VASA_NISTIRIO_1,
+  semanticId: false,
+  size: 5,
+  mode: ChallengeMode.NO_MODE,
+  maxSpeed: 0,
+};
+
+const GLOWING_CRYSTAL: NpcDefinition = {
+  fullName: 'Glowing crystal',
+  shortName: 'Crystal',
+  canonicalId: NpcId.GLOWING_CRYSTAL,
+  semanticId: false,
+  size: 3,
+  mode: ChallengeMode.NO_MODE,
+  maxSpeed: 0,
+};
+
+const SKELETAL_MYSTIC: NpcDefinition = {
+  fullName: 'Skeletal Mystic',
+  shortName: 'Mystic',
+  canonicalId: NpcId.SKELETAL_MYSTIC_1,
+  semanticId: false,
+  size: 2,
+  mode: ChallengeMode.NO_MODE,
+  maxSpeed: 1,
+};
+
+const MUTTADILE_LARGE: NpcDefinition = {
+  fullName: 'Muttadile',
+  shortName: 'Big muttadile',
+  canonicalId: NpcId.MUTTADILE_LARGE_1,
+  semanticId: false,
+  size: 4,
+  mode: ChallengeMode.NO_MODE,
+  maxSpeed: 1,
+};
+
+const MUTTADILE_SMALL: NpcDefinition = {
+  fullName: 'Muttadile',
+  shortName: 'Small muttadile',
+  canonicalId: NpcId.MUTTADILE_SMALL,
+  semanticId: false,
+  size: 3,
+  mode: ChallengeMode.NO_MODE,
+  maxSpeed: 1,
+};
+
+const OLM_MAGE_HAND: NpcDefinition = {
+  fullName: 'Great Olm (Mage Hand)',
+  shortName: 'Olm mage hand',
+  canonicalId: NpcId.OLM_MAGE_HAND_1,
+  semanticId: false,
+  size: 3,
+  mode: ChallengeMode.NO_MODE,
+  maxSpeed: 0,
+};
+
+const OLM_MELEE_HAND: NpcDefinition = {
+  fullName: 'Great Olm (Melee Hand)',
+  shortName: 'Olm melee hand',
+  canonicalId: NpcId.OLM_MELEE_HAND_1,
+  semanticId: false,
+  size: 3,
+  mode: ChallengeMode.NO_MODE,
+  maxSpeed: 0,
+};
+
+const OLM_HEAD: NpcDefinition = {
+  fullName: 'Great Olm',
+  shortName: 'Olm head',
+  canonicalId: NpcId.OLM_HEAD_1,
+  semanticId: false,
+  size: 4,
+  mode: ChallengeMode.NO_MODE,
+  maxSpeed: 0,
+};
+
 const NPC_DEFINITIONS: Record<number, NpcDefinition> = {
   // Inferno NPCs.
   [NpcId.JAL_NIB]: JAL_NIB,
@@ -944,6 +1114,54 @@ const NPC_DEFINITIONS: Record<number, NpcDefinition> = {
   [NpcId.EARTHEN_SHIELD]: EARTHEN_SHIELD,
   [NpcId.GIANT_DEMONIC_RANGE_LARVA]: GIANT_DEMONIC_RANGE_LARVA,
   [NpcId.GIANT_DEMONIC_MAGIC_LARVA]: GIANT_DEMONIC_MAGIC_LARVA,
+
+  // Chambers of Xeric NPCs.
+  [NpcId.TEKTON_1]: TEKTON,
+  [NpcId.TEKTON_2]: TEKTON,
+  [NpcId.TEKTON_3]: TEKTON,
+  [NpcId.TEKTON_4]: TEKTON,
+  [NpcId.TEKTON_ENRAGED_1]: TEKTON,
+  [NpcId.TEKTON_ENRAGED_2]: TEKTON,
+
+  [NpcId.ICE_DEMON_1]: ICE_DEMON,
+  [NpcId.ICE_DEMON_2]: ICE_DEMON,
+
+  [NpcId.LIZARDMAN_SHAMAN_1]: LIZARDMAN_SHAMAN,
+  [NpcId.LIZARDMAN_SHAMAN_2]: LIZARDMAN_SHAMAN,
+
+  [NpcId.VANGUARD_INITIAL]: VANGUARD,
+  [NpcId.VANGUARD_DIG]: VANGUARD,
+  [NpcId.VANGUARD_MELEE]: VANGUARD,
+  [NpcId.VANGUARD_RANGED]: VANGUARD,
+  [NpcId.VANGUARD_MAGIC]: VANGUARD,
+
+  [NpcId.CORRUPTED_SCAVENGER]: CORRUPTED_SCAVENGER,
+  [NpcId.ABYSSAL_PORTAL]: ABYSSAL_PORTAL,
+
+  [NpcId.GUARDIAN_1_LIVE]: GUARDIAN,
+  [NpcId.GUARDIAN_1_DEAD]: GUARDIAN,
+  [NpcId.GUARDIAN_2_LIVE]: GUARDIAN,
+  [NpcId.GUARDIAN_2_DEAD]: GUARDIAN,
+
+  [NpcId.VASA_NISTIRIO_1]: VASA_NISTIRIO,
+  [NpcId.VASA_NISTIRIO_2]: VASA_NISTIRIO,
+  [NpcId.VASA_NISTIRIO_3]: VASA_NISTIRIO,
+  [NpcId.GLOWING_CRYSTAL]: GLOWING_CRYSTAL,
+
+  [NpcId.SKELETAL_MYSTIC_1]: SKELETAL_MYSTIC,
+  [NpcId.SKELETAL_MYSTIC_2]: SKELETAL_MYSTIC,
+  [NpcId.SKELETAL_MYSTIC_3]: SKELETAL_MYSTIC,
+
+  [NpcId.MUTTADILE_LARGE_1]: MUTTADILE_LARGE,
+  [NpcId.MUTTADILE_LARGE_2]: MUTTADILE_LARGE,
+  [NpcId.MUTTADILE_SMALL]: MUTTADILE_SMALL,
+
+  [NpcId.OLM_MAGE_HAND_1]: OLM_MAGE_HAND,
+  [NpcId.OLM_MAGE_HAND_2]: OLM_MAGE_HAND,
+  [NpcId.OLM_MELEE_HAND_1]: OLM_MELEE_HAND,
+  [NpcId.OLM_MELEE_HAND_2]: OLM_MELEE_HAND,
+  [NpcId.OLM_HEAD_1]: OLM_HEAD,
+  [NpcId.OLM_HEAD_2]: OLM_HEAD,
 };
 
 export function getNpcDefinition(npcId: number): NpcDefinition | null {

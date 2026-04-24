@@ -78,6 +78,24 @@ const STAGE_MENU_ITEMS: MenuItem[] = [
     ],
   },
   {
+    label: 'CoX',
+    subMenu: [
+      { label: 'Tekton', value: Stage.COX_TEKTON },
+      { label: 'Crabs', value: Stage.COX_CRABS },
+      { label: 'Ice Demon', value: Stage.COX_ICE_DEMON },
+      { label: 'Shamans', value: Stage.COX_SHAMANS },
+      { label: 'Vanguards', value: Stage.COX_VANGUARDS },
+      { label: 'Thieving', value: Stage.COX_THIEVING },
+      { label: 'Tightrope', value: Stage.COX_TIGHTROPE },
+      { label: 'Vespula', value: Stage.COX_VESPULA },
+      { label: 'Guardians', value: Stage.COX_GUARDIANS },
+      { label: 'Vasa', value: Stage.COX_VASA },
+      { label: 'Mystics', value: Stage.COX_MYSTICS },
+      { label: 'Muttadile', value: Stage.COX_MUTTADILE },
+      { label: 'Olm', value: Stage.COX_OLM },
+    ],
+  },
+  {
     label: 'Inferno',
     subMenu: [
       { label: 'Wave 9', value: Stage.INFERNO_WAVE_9 },

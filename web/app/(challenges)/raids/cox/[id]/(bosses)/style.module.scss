@@ -49,3 +49,23 @@
     gap: 12px;
   }
 }
+
+.charts {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  max-width: 1400px;
+
+  .chart {
+    width: 100%;
+    height: 500px;
+
+    @media (max-width: 1300px) {
+      height: 400px;
+    }
+
+    @media (max-width: $COMPACT_WIDTH_THRESHOLD) {
+      height: 250px;
+    }
+  }
+}

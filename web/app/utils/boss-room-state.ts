@@ -14,6 +14,25 @@ import {
   Stage,
   TobRaid,
   TobRooms,
+  isNpcEvent,
+  isPlayerEvent,
+  RawItemDelta,
+  MaidenCrabProperties,
+  NyloProperties,
+  VerzikCrabProperties,
+  DataSource,
+  SplitType,
+  Skill,
+  VerzikHealEvent,
+  VerzikDawnEvent,
+  MokhaiotlChallenge,
+  PrayerSet,
+  InfernoChallenge,
+  NpcId,
+  NpcSpawnEvent,
+  getNpcDefinition,
+  CoxRaid,
+  CoxRooms,
 } from '@blert/common';
 import { useSearchParams } from 'next/navigation';
 import {
@@ -253,6 +272,70 @@ export function getStageInfo(
     return {
       ticks: challenge.splits[split!] ?? -1,
       npcs: raid.tobRooms[room]?.npcs ?? {},
+    };
+  }
+
+  if (challenge.type === ChallengeType.COX) {
+    const raid = challenge as CoxRaid;
+    let room: keyof CoxRooms = 'tekton';
+    let split: SplitType;
+    switch (stage) {
+      case Stage.COX_TEKTON:
+        room = 'tekton';
+        split = SplitType.COX_TEKTON;
+        break;
+      case Stage.COX_CRABS:
+        room = 'crabs';
+        split = SplitType.COX_CRABS;
+        break;
+      case Stage.COX_ICE_DEMON:
+        room = 'iceDemon';
+        split = SplitType.COX_ICE_DEMON;
+        break;
+      case Stage.COX_SHAMANS:
+        room = 'shamans';
+        split = SplitType.COX_SHAMANS;
+        break;
+      case Stage.COX_VANGUARDS:
+        room = 'vanguards';
+        split = SplitType.COX_VANGUARDS;
+        break;
+      case Stage.COX_THIEVING:
+        room = 'thieving';
+        split = SplitType.COX_THIEVING;
+        break;
+      case Stage.COX_VESPULA:
+        room = 'vespula';
+        split = SplitType.COX_VESPULA;
+        break;
+      case Stage.COX_TIGHTROPE:
+        room = 'tightrope';
+        split = SplitType.COX_TIGHTROPE;  
+        break;
+      case Stage.COX_GUARDIANS:
+        room = 'guardians';
+        split = SplitType.COX_GUARDIANS;
+        break;
+      case Stage.COX_VASA:
+        room = 'vasa';
+        split = SplitType.COX_VASA;
+        break;
+      case Stage.COX_MYSTICS:
+        room = 'mystics';
+        split = SplitType.COX_MYSTICS;
+        break;
+      case Stage.COX_MUTTADILE:
+        room = 'muttadile';
+        split = SplitType.COX_MUTTADILE;
+        break;
+      case Stage.COX_OLM:
+        room = 'olm';
+        split = SplitType.COX_OLM;
+        break;
+    }
+    return {
+      ticks: challenge.splits[split!] ?? -1,
+      npcs: raid.coxRooms[room]?.npcs ?? {},
     };
   }
 
