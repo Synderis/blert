@@ -198,6 +198,10 @@ export function RaidBossesOverview(props: RaidBossesOverviewProps) {
                     <div className={styles.roomDetails}>
                         <h4 className={styles.bossName}>
                             Vanguards
+                            <i className="fa-solid fa-hourglass" />
+                            <span className={styles.time}>
+                                {ticksToFormattedSeconds(splits[SplitType.COX_VANGUARDS] ?? 0)}
+                            </span>
                             {rooms.vanguards.deaths.length > 0 && (
                                 <div
                                     className={styles.deathCount}
@@ -231,6 +235,10 @@ export function RaidBossesOverview(props: RaidBossesOverviewProps) {
                     <div className={styles.roomDetails}>
                         <h4 className={styles.bossName}>
                             Thieving
+                            <i className="fa-solid fa-hourglass" />
+                            <span className={styles.time}>
+                                {ticksToFormattedSeconds(splits[SplitType.COX_THIEVING] ?? 0)}
+                            </span>
                             {rooms.thieving.deaths.length > 0 && (
                                 <div
                                     className={styles.deathCount}
@@ -264,6 +272,10 @@ export function RaidBossesOverview(props: RaidBossesOverviewProps) {
                     <div className={styles.roomDetails}>
                         <h4 className={styles.bossName}>
                             Vespula
+                            <i className="fa-solid fa-hourglass" />
+                            <span className={styles.time}>
+                                {ticksToFormattedSeconds(splits[SplitType.COX_VESPULA] ?? 0)}
+                            </span>
                             {rooms.vespula.deaths.length > 0 && (
                                 <div
                                     className={styles.deathCount}
@@ -297,6 +309,10 @@ export function RaidBossesOverview(props: RaidBossesOverviewProps) {
                     <div className={styles.roomDetails}>
                         <h4 className={styles.bossName}>
                             Tightrope
+                            <i className="fa-solid fa-hourglass" />
+                            <span className={styles.time}>
+                                {ticksToFormattedSeconds(splits[SplitType.COX_TIGHTROPE] ?? 0)}
+                            </span>
                             {rooms.tightrope.deaths.length > 0 && (
                                 <div
                                     className={styles.deathCount}
@@ -330,6 +346,10 @@ export function RaidBossesOverview(props: RaidBossesOverviewProps) {
                     <div className={styles.roomDetails}>
                         <h4 className={styles.bossName}>
                             Guardians
+                            <i className="fa-solid fa-hourglass" />
+                            <span className={styles.time}>
+                                {ticksToFormattedSeconds(splits[SplitType.COX_GUARDIANS] ?? 0)}
+                            </span>
                             {rooms.guardians.deaths.length > 0 && (
                                 <div
                                     className={styles.deathCount}
@@ -363,6 +383,10 @@ export function RaidBossesOverview(props: RaidBossesOverviewProps) {
                     <div className={styles.roomDetails}>
                         <h4 className={styles.bossName}>
                             Vasa Nistirio
+                            <i className="fa-solid fa-hourglass" />
+                            <span className={styles.time}>
+                                {ticksToFormattedSeconds(splits[SplitType.COX_VASA] ?? 0)}
+                            </span>
                             {rooms.vasa.deaths.length > 0 && (
                                 <div
                                     className={styles.deathCount}
@@ -396,6 +420,10 @@ export function RaidBossesOverview(props: RaidBossesOverviewProps) {
                     <div className={styles.roomDetails}>
                         <h4 className={styles.bossName}>
                             Mystics
+                            <i className="fa-solid fa-hourglass" />
+                            <span className={styles.time}>
+                                {ticksToFormattedSeconds(splits[SplitType.COX_MYSTICS] ?? 0)}
+                            </span>
                             {rooms.mystics.deaths.length > 0 && (
                                 <div
                                     className={styles.deathCount}
@@ -429,6 +457,10 @@ export function RaidBossesOverview(props: RaidBossesOverviewProps) {
                     <div className={styles.roomDetails}>
                         <h4 className={styles.bossName}>
                             Muttadile
+                            <i className="fa-solid fa-hourglass" />
+                            <span className={styles.time}>
+                                {ticksToFormattedSeconds(splits[SplitType.COX_MUTTADILE] ?? 0)}
+                            </span>
                             {rooms.muttadile.deaths.length > 0 && (
                                 <div
                                     className={styles.deathCount}
@@ -465,7 +497,7 @@ export function RaidBossesOverview(props: RaidBossesOverviewProps) {
                             <i className="fa-solid fa-hourglass" />
                             <span className={styles.time}>
                                 {ticksToFormattedSeconds(
-                                    splits[SplitType.COX_REG_CHALLENGE] ?? 0,
+                                    splits[SplitType.COX_OLM] ?? 0,
                                 )}
                             </span>
                             {rooms.olm.deaths.length > 0 && (

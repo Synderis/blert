@@ -822,7 +822,7 @@ export default abstract class ChallengeProcessor {
             ${this.type},
             ${this.mode},
             ${this.getScale()},
-            ${hash},
+            ${partyHash(this.party)},
             ${startTime},
             ${SessionStatus.ACTIVE}
           )
@@ -872,16 +872,18 @@ export default abstract class ChallengeProcessor {
         primary_gear: PrimaryMeleeGear.UNKNOWN,
       }));
 
-      await sql`
-        INSERT INTO challenge_players ${sql(
-          challengePlayers,
-          'challenge_id',
-          'player_id',
-          'username',
-          'orb',
-          'primary_gear',
-        )}
-    `;
+      if (challengePlayers.length > 0) {
+        await sql`
+          INSERT INTO challenge_players ${sql(
+            challengePlayers,
+            'challenge_id',
+            'player_id',
+            'username',
+            'orb',
+            'primary_gear',
+          )}
+      `;
+      }
 
       return [id, sessionId];
     });

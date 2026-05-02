@@ -33,10 +33,10 @@ import {
 import bossStyles from '../style.module.scss';
 
 const OLM_MAP_DEFINITION: MapDefinition = {
-  baseX: 3231,
-  baseY: 5737,
-  width: 50,
-  height: 50,
+  baseX: 3220,
+  baseY: 5725,
+  width: 28,
+  height: 28,
   plane: 0,
 };
 

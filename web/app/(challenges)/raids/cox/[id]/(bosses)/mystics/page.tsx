@@ -33,10 +33,10 @@ import {
 import bossStyles from '../style.module.scss';
 
 const MYSTICS_MAP_DEFINITION: MapDefinition = {
-  baseX: 3284,
-  baseY: 5270,
-  width: 50,
-  height: 50,
+  baseX: 3265,
+  baseY: 5250,
+  width: 28,
+  height: 28,
   plane: 1,
 };
 
@@ -58,7 +58,7 @@ export default function MysticsPage() {
     usePlayingState(totalTicks);
 
   const mapDefinition = useMemo(() => {
-    const initialZoom = compact ? 16 : 24;
+    const initialZoom = compact ? 12 : 20;
     return {
       ...MYSTICS_MAP_DEFINITION,
       initialZoom,
