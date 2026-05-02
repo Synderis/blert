@@ -5,6 +5,7 @@ import {
   CoxChallengeStats,
   CoxRooms,
   DataRepository,
+  PlayerAttack,
   PriceTracker,
   SplitType,
   Stage,
@@ -42,6 +43,8 @@ function roomsKey(stage: Stage): keyof CoxRooms {
       return 'guardians';
     case Stage.COX_MYSTICS:
       return 'mystics';
+    case Stage.COX_MUTTADILE:
+      return 'muttadile';
     case Stage.COX_OLM:
       return 'olm';
     default:
@@ -247,6 +250,15 @@ export default class ChambersProcessor extends ChallengeProcessor {
         this.stageStats.mysticsDeaths = this.rooms.mystics.deaths.length;
         break;
 
+      case Stage.COX_MUTTADILE:
+        stageSplit = SplitType.COX_MUTTADILE;
+        this.rooms.muttadile = {
+          ...roomData,
+          stage: Stage.COX_MUTTADILE,
+        };
+        this.stageStats.muttadileDeaths = this.rooms.muttadile.deaths.length;
+        break;
+
       case Stage.COX_OLM:
         stageSplit = SplitType.COX_OLM;
         this.rooms.olm = {
@@ -268,7 +280,7 @@ export default class ChambersProcessor extends ChallengeProcessor {
     );
   }
 
-  protected override processChallengeEvent(
+  protected override async processChallengeEvent(
     allEvents: MergedEvents,
     event: Event,
   ): Promise<boolean> {
@@ -280,8 +292,8 @@ export default class ChambersProcessor extends ChallengeProcessor {
 
       case Event.Type.PLAYER_ATTACK:
         // Handle player attacks for tracking purposes
+        await this.processPlayerAttack(event);
         break;
-
       case Event.Type.NPC_SPAWN:
         // Handle NPC spawns
         break;
@@ -334,5 +346,42 @@ export default class ChambersProcessor extends ChallengeProcessor {
       SET ${sql(camelToSnakeObject(updates))}
       WHERE challenge_id = ${this.getDatabaseId()};
     `;
+  }
+
+  private async processPlayerAttack(event: Event): Promise<void> {
+    const username = event.getPlayer()?.getName();
+    const attack = event.getPlayerAttack();
+
+    if (username === undefined || attack === undefined) {
+      return;
+    }
+
+    const stats = this.getCurrentStageStats(username);
+
+    switch (attack.getType()) {
+      case PlayerAttack.GODSWORD_SMACK:
+        stats.bgsSmacks += 1;
+        break;
+
+      case PlayerAttack.HAMMER_BOP:
+        stats.hammerBops += 1;
+        break;
+
+      case PlayerAttack.CHALLY_SWIPE:
+        stats.challyPokes += 1;
+        break;
+
+      case PlayerAttack.ELDER_MAUL:
+        stats.elderMaulSmacks += 1;
+        break;
+
+      case PlayerAttack.TONALZTICS_AUTO:
+        stats.ralosAutos += 1;
+        break;
+
+      case PlayerAttack.SCYTHE_UNCHARGED:
+        stats.unchargedScytheSwings += 1;
+        break;
+    }
   }
 }

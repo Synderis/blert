@@ -725,13 +725,13 @@ export default abstract class ChallengeProcessor {
             start_time,
             status
           ) VALUES (
-           ${sessionUuid},
-           ${this.type},
-           ${this.mode},
-           ${this.getScale()},
-           ${partyHash(this.party)},
-           ${startTime},
-           ${SessionStatus.ACTIVE}
+            ${sessionUuid},
+            ${this.type},
+            ${this.mode},
+            ${this.getScale()},
+            ${partyHash(this.party)},
+            ${startTime},
+            ${SessionStatus.ACTIVE}
           )
           RETURNING id
         `;
@@ -779,16 +779,18 @@ export default abstract class ChallengeProcessor {
         primary_gear: PrimaryMeleeGear.UNKNOWN,
       }));
 
-      await sql`
-        INSERT INTO challenge_players ${sql(
-          challengePlayers,
-          'challenge_id',
-          'player_id',
-          'username',
-          'orb',
-          'primary_gear',
-        )}
-    `;
+      if (challengePlayers.length > 0) {
+        await sql`
+          INSERT INTO challenge_players ${sql(
+            challengePlayers,
+            'challenge_id',
+            'player_id',
+            'username',
+            'orb',
+            'primary_gear',
+          )}
+      `;
+      }
 
       return [id, sessionId];
     });
