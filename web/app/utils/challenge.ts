@@ -258,6 +258,8 @@ export function relevantSplitsForStage(
       break;
     case Stage.COX_MYSTICS:
       break;
+    case Stage.COX_MUTTADILE:
+      break;
     case Stage.COX_OLM:
       break;
 
