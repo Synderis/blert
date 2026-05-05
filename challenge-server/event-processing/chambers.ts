@@ -326,6 +326,15 @@ export default class ChambersProcessor extends ChallengeProcessor {
     }
 
     for (let s = Stage.COX_TEKTON; s <= stage; s++) {
+      // Skip floor/corridor stages between rooms (COX_FLOOR_1=24, COX_FLOOR_2=29,
+      // COX_FLOOR_3=34) which are not boss rooms and have no entry in `roomsKey`.
+      if (
+        s === Stage.COX_FLOOR_1 ||
+        s === Stage.COX_FLOOR_2 ||
+        s === Stage.COX_FLOOR_3
+      ) {
+        continue;
+      }
       if (this.rooms[roomsKey(s)] === null) {
         return false;
       }

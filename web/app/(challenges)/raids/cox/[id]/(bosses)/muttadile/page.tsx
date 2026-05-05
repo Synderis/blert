@@ -33,10 +33,10 @@ import {
 import bossStyles from '../style.module.scss';
 
 const MUTTADILES_MAP_DEFINITION: MapDefinition = {
-  baseX: 3296,
-  baseY: 5320,
-  width: 50,
-  height: 50,
+  baseX: 3300,
+  baseY: 5312,
+  width: 28,
+  height: 28,
   plane: 1,
 };
 
@@ -60,7 +60,7 @@ export default function MuttadilePage() {
   const { setSelectedPlayer, selectedPlayer } = useContext(ActorContext);
 
   const mapDefinition = useMemo(() => {
-    const initialZoom = compact ? 16 : 24;
+    const initialZoom = compact ? 12 : 20;
     return {
       ...MUTTADILES_MAP_DEFINITION,
       initialZoom,
