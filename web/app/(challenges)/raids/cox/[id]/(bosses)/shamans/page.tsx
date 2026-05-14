@@ -15,8 +15,8 @@ import { useContext, useMemo } from 'react';
 import BossFightOverview from '@/components/boss-fight-overview';
 import BossPageAttackTimeline from '@/components/boss-page-attack-timeline';
 import BossPageControls from '@/components/boss-page-controls';
-import BossPageDPSTimeline from '@/components/boss-page-dps-timeline';
 import BossPageParty from '@/components/boss-page-party';
+import MultiBossDpsTimeline, { BossDefinition } from '@/components/multi-boss-dps-timeline';
 import BossPageReplay from '@/components/boss-page-replay';
 import Card from '@/components/card';
 import { MapDefinition } from '@/components/map-renderer';
@@ -67,35 +67,76 @@ export default function ShamansPage() {
 
   const { setSelectedPlayer, selectedPlayer } = useContext(ActorContext);
 
+  const shamanBosses: BossDefinition[] = [
+    { name: 'Shaman 1', dataKey: 'shaman1Health', color: '#ef4444' },
+    { name: 'Shaman 2', dataKey: 'shaman2Health', color: '#22c55e' },
+  ];
+
   const bossHealthChartData = useMemo(() => {
-      let iceDemon: EnhancedRoomNpc | null = null;
-      const iter = npcState.values();
-      for (let npc = iter.next(); !npc.done; npc = iter.next()) {
-        if (Npc.isIceDemon(npc.value.spawnNpcId)) {
-          // iceDemon = npcState.get(npc.value.roomId)!;
-          iceDemon = npc.value;
-          break;
+      // Collect shamans by NPC ID (7573, 7574)
+      let shaman1: EnhancedRoomNpc | null = null;
+      let shaman2: EnhancedRoomNpc | null = null;
+      
+      for (const npc of npcState.values()) {
+        if (npc.spawnNpcId === 7573) {
+          shaman1 = npc;
+        } else if (npc.spawnNpcId === 7574) {
+          shaman2 = npc;
         }
       }
   
-      if (iceDemon !== null) {
-        return iceDemon.stateByTick.map((state, tick) => ({
-          tick,
-          bossHealthPercentage: state?.hitpoints.percentage() ?? 0,
-        }));
+      if (shaman1 || shaman2) {
+        // Calculate health percentage for each shaman
+        const chartData = [];
+        for (let tick = 0; tick < totalTicks; tick++) {
+          const tickData: {
+            tick: number;
+            shaman1Health?: number;
+            shaman2Health?: number;
+          } = { tick };
+          
+          if (shaman1) {
+            const state = shaman1.stateByTick[tick];
+            if (state) {
+              tickData.shaman1Health = state.hitpoints.percentage();
+            }
+          }
+          
+          if (shaman2) {
+            const state = shaman2.stateByTick[tick];
+            if (state) {
+              tickData.shaman2Health = state.hitpoints.percentage();
+            }
+          }
+          
+          chartData.push(tickData);
+        }
+        return chartData;
       }
   
-      const healthByTick = new Map<number, number>();
+      // Fallback to event-based tracking if state isn't available
+      const healthByTick = new Map<number, {
+        shaman1Health?: number;
+        shaman2Health?: number;
+      }>();
+      
       for (const event of events) {
         if (
           event.type === EventType.NPC_UPDATE &&
           event.npc !== undefined &&
-          Npc.isIceDemon(event.npc.id)
+          Npc.isLizardmanShaman(event.npc.id)
         ) {
-          healthByTick.set(
-            event.tick,
-            SkillLevel.fromRaw(event.npc.hitpoints).percentage(),
-          );
+          const existing = healthByTick.get(event.tick) ?? {};
+          const skillLevel = SkillLevel.fromRaw(event.npc.hitpoints);
+          const healthPct = skillLevel.percentage();
+          
+          if (event.npc.id === 7573) {
+            existing.shaman1Health = healthPct;
+          } else if (event.npc.id === 7574) {
+            existing.shaman2Health = healthPct;
+          }
+          
+          healthByTick.set(event.tick, existing);
         }
       }
   
@@ -105,20 +146,29 @@ export default function ShamansPage() {
   
       const maxTick = Math.max(...healthByTick.keys());
       const chartData = [];
-      let lastHealth = 0;
+      let lastShaman1Health: number | undefined;
+      let lastShaman2Health: number | undefined;
+      
       for (let tick = 0; tick <= maxTick; tick++) {
         const healthAtTick = healthByTick.get(tick);
-        if (healthAtTick !== undefined) {
-          lastHealth = healthAtTick;
+        if (healthAtTick) {
+          if (healthAtTick.shaman1Health !== undefined) {
+            lastShaman1Health = healthAtTick.shaman1Health;
+          }
+          if (healthAtTick.shaman2Health !== undefined) {
+            lastShaman2Health = healthAtTick.shaman2Health;
+          }
         }
+        
         chartData.push({
           tick,
-          bossHealthPercentage: lastHealth,
+          shaman1Health: lastShaman1Health,
+          shaman2Health: lastShaman2Health,
         });
       }
   
       return chartData;
-    }, [events, npcState]);
+    }, [events, npcState, totalTicks]);
   
     const { entitiesByTick, preloads } = useMapEntities(
       challenge,
@@ -213,11 +263,12 @@ export default function ShamansPage() {
       <div className={bossStyles.charts}>
         <Card
           className={bossStyles.chart}
-          header={{ title: "Lizardman Shaman's Health By Tick" }}
+          header={{ title: "Lizardman Shamans Health By Tick" }}
         >
-          <BossPageDPSTimeline
+          <MultiBossDpsTimeline
             currentTick={currentTick}
             data={bossHealthChartData}
+            bosses={shamanBosses}
             width="100%"
             height="100%"
           />
