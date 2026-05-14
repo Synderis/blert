@@ -15,8 +15,9 @@ import { useContext, useMemo } from 'react';
 import BossFightOverview from '@/components/boss-fight-overview';
 import BossPageAttackTimeline from '@/components/boss-page-attack-timeline';
 import BossPageControls from '@/components/boss-page-controls';
-import BossPageDPSTimeline from '@/components/boss-page-dps-timeline';
 import BossPageParty from '@/components/boss-page-party';
+import MultiBossDpsTimeline from '@/components/multi-boss-dps-timeline';
+import type { BossDefinition } from '@/components/multi-boss-dps-timeline';
 import BossPageReplay from '@/components/boss-page-replay';
 import Card from '@/components/card';
 import { MapDefinition } from '@/components/map-renderer';
@@ -67,34 +68,76 @@ export default function MuttadilePage() {
     };
   }, [compact]);
 
+  const muttadileBosses: BossDefinition[] = [
+    { name: 'Small Muttadile', dataKey: 'smallHealth', color: '#ef4444' },
+    { name: 'Large Muttadile', dataKey: 'largeHealth', color: '#3b82f6' },
+  ];
+
   const bossHealthChartData = useMemo(() => {
-    let muttadile: EnhancedRoomNpc | null = null;
-    const iter = npcState.values();
-    for (let npc = iter.next(); !npc.done; npc = iter.next()) {
-      if (Npc.isMuttadile(npc.value.spawnNpcId)) {
-        muttadile = npc.value;
-        break;
+    // Collect muttadiles by NPC ID (7562=small, 7561/7563=large)
+    let smallMuttadile: EnhancedRoomNpc | null = null;
+    let largeMuttadile: EnhancedRoomNpc | null = null;
+    
+    for (const npc of npcState.values()) {
+      if (npc.spawnNpcId === 7562) {
+        smallMuttadile = npc;
+      } else if (npc.spawnNpcId === 7561 || npc.spawnNpcId === 7563) {
+        largeMuttadile = npc;
       }
     }
 
-    if (muttadile !== null) {
-      return muttadile.stateByTick.map((state, tick) => ({
-        tick,
-        bossHealthPercentage: state?.hitpoints.percentage() ?? 0,
-      }));
+    if (smallMuttadile || largeMuttadile) {
+      // Calculate health percentage for each muttadile
+      const chartData = [];
+      for (let tick = 0; tick < totalTicks; tick++) {
+        const tickData: {
+          tick: number;
+          smallHealth?: number;
+          largeHealth?: number;
+        } = { tick };
+        
+        if (smallMuttadile) {
+          const state = smallMuttadile.stateByTick[tick];
+          if (state) {
+            tickData.smallHealth = state.hitpoints.percentage();
+          }
+        }
+        
+        if (largeMuttadile) {
+          const state = largeMuttadile.stateByTick[tick];
+          if (state) {
+            tickData.largeHealth = state.hitpoints.percentage();
+          }
+        }
+        
+        chartData.push(tickData);
+      }
+      return chartData;
     }
 
-    const healthByTick = new Map<number, number>();
+    // Fallback to event-based tracking if state isn't available
+    const healthByTick = new Map<number, {
+      smallHealth?: number;
+      largeHealth?: number;
+    }>();
+    
     for (const event of events) {
       if (
         event.type === EventType.NPC_UPDATE &&
         event.npc !== undefined &&
         Npc.isMuttadile(event.npc.id)
       ) {
-        healthByTick.set(
-          event.tick,
-          SkillLevel.fromRaw(event.npc.hitpoints).percentage(),
-        );
+        const existing = healthByTick.get(event.tick) ?? {};
+        const skillLevel = SkillLevel.fromRaw(event.npc.hitpoints);
+        const healthPct = skillLevel.percentage();
+        
+        if (event.npc.id === 7562) {
+          existing.smallHealth = healthPct;
+        } else if (event.npc.id === 7561 || event.npc.id === 7563) {
+          existing.largeHealth = healthPct;
+        }
+        
+        healthByTick.set(event.tick, existing);
       }
     }
 
@@ -104,20 +147,29 @@ export default function MuttadilePage() {
 
     const maxTick = Math.max(...healthByTick.keys());
     const chartData = [];
-    let lastHealth = 0;
+    let lastSmallHealth: number | undefined;
+    let lastLargeHealth: number | undefined;
+    
     for (let tick = 0; tick <= maxTick; tick++) {
       const healthAtTick = healthByTick.get(tick);
-      if (healthAtTick !== undefined) {
-        lastHealth = healthAtTick;
+      if (healthAtTick) {
+        if (healthAtTick.smallHealth !== undefined) {
+          lastSmallHealth = healthAtTick.smallHealth;
+        }
+        if (healthAtTick.largeHealth !== undefined) {
+          lastLargeHealth = healthAtTick.largeHealth;
+        }
       }
+      
       chartData.push({
         tick,
-        bossHealthPercentage: lastHealth,
+        smallHealth: lastSmallHealth,
+        largeHealth: lastLargeHealth,
       });
     }
 
     return chartData;
-  }, [events, npcState]);
+  }, [events, npcState, totalTicks]);
 
   const { entitiesByTick, preloads } = useMapEntities(
     challenge,
@@ -212,11 +264,12 @@ export default function MuttadilePage() {
       <div className={bossStyles.charts}>
         <Card
           className={bossStyles.chart}
-          header={{ title: "Muttadile's Health By Tick" }}
+          header={{ title: "Muttadiles Health By Tick" }}
         >
-          <BossPageDPSTimeline
+          <MultiBossDpsTimeline
             currentTick={currentTick}
             data={bossHealthChartData}
+            bosses={muttadileBosses}
             width="100%"
             height="100%"
           />

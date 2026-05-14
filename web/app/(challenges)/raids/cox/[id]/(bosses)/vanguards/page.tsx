@@ -15,12 +15,12 @@ import { useContext, useMemo } from 'react';
 import BossFightOverview from '@/components/boss-fight-overview';
 import BossPageAttackTimeline from '@/components/boss-page-attack-timeline';
 import BossPageControls from '@/components/boss-page-controls';
-import BossPageDPSTimeline from '@/components/boss-page-dps-timeline';
 import BossPageParty from '@/components/boss-page-party';
 import BossPageReplay from '@/components/boss-page-replay';
 import Card from '@/components/card';
 import { MapDefinition } from '@/components/map-renderer';
 import Loading from '@/components/loading';
+import MultiBossDpsTimeline, { BossDefinition } from '@/components/multi-boss-dps-timeline';
 import { useDisplay } from '@/display';
 import { ActorContext } from '@/(challenges)/raids/cox/context';
 import {
@@ -66,34 +66,91 @@ export default function VanguardsPage() {
 
   const { setSelectedPlayer, selectedPlayer } = useContext(ActorContext);
 
-  const bossHealthChartData = useMemo(() => {
-      let vanguard: EnhancedRoomNpc | null = null;
-      const iter = npcState.values();
-      for (let npc = iter.next(); !npc.done; npc = iter.next()) {
-        if (Npc.isVanguard(npc.value.spawnNpcId)) {
-          vanguard = npc.value;
-          break;
+  const vanguardBosses: BossDefinition[] = [
+    { name: 'Melee Vanguard', dataKey: 'meleeHealth', color: '#ef4444' },
+    { name: 'Ranged Vanguard', dataKey: 'rangedHealth', color: '#22c55e' },
+    { name: 'Magic Vanguard', dataKey: 'magicHealth', color: '#3b82f6' },
+  ];
+
+  const vanguardsHealthChartData = useMemo(() => {
+      // Collect vanguards by type (7527=melee, 7528=ranged, 7529=magic)
+      let meleeVanguard: EnhancedRoomNpc | null = null;
+      let rangedVanguard: EnhancedRoomNpc | null = null;
+      let magicVanguard: EnhancedRoomNpc | null = null;
+      
+      for (const npc of npcState.values()) {
+        if (npc.spawnNpcId === 7527) {
+          meleeVanguard = npc;
+        } else if (npc.spawnNpcId === 7528) {
+          rangedVanguard = npc;
+        } else if (npc.spawnNpcId === 7529) {
+          magicVanguard = npc;
         }
       }
   
-      if (vanguard !== null) {
-        return vanguard.stateByTick.map((state, tick) => ({
-          tick,
-          bossHealthPercentage: state?.hitpoints.percentage() ?? 0,
-        }));
+      if (meleeVanguard || rangedVanguard || magicVanguard) {
+        // Calculate health percentage for each vanguard
+        const chartData = [];
+        for (let tick = 0; tick < totalTicks; tick++) {
+          const tickData: {
+            tick: number;
+            meleeHealth?: number;
+            rangedHealth?: number;
+            magicHealth?: number;
+          } = { tick };
+          
+          if (meleeVanguard) {
+            const state = meleeVanguard.stateByTick[tick];
+            if (state) {
+              tickData.meleeHealth = state.hitpoints.percentage();
+            }
+          }
+          
+          if (rangedVanguard) {
+            const state = rangedVanguard.stateByTick[tick];
+            if (state) {
+              tickData.rangedHealth = state.hitpoints.percentage();
+            }
+          }
+          
+          if (magicVanguard) {
+            const state = magicVanguard.stateByTick[tick];
+            if (state) {
+              tickData.magicHealth = state.hitpoints.percentage();
+            }
+          }
+          
+          chartData.push(tickData);
+        }
+        return chartData;
       }
   
-      const healthByTick = new Map<number, number>();
+      // Fallback to event-based tracking if state isn't available
+      const healthByTick = new Map<number, {
+        meleeHealth?: number;
+        rangedHealth?: number;
+        magicHealth?: number;
+      }>();
+      
       for (const event of events) {
         if (
           event.type === EventType.NPC_UPDATE &&
           event.npc !== undefined &&
           Npc.isVanguard(event.npc.id)
         ) {
-          healthByTick.set(
-            event.tick,
-            SkillLevel.fromRaw(event.npc.hitpoints).percentage(),
-          );
+          const existing = healthByTick.get(event.tick) ?? {};
+          const skillLevel = SkillLevel.fromRaw(event.npc.hitpoints);
+          const healthPct = skillLevel.percentage();
+          
+          if (event.npc.id === 7527) {
+            existing.meleeHealth = healthPct;
+          } else if (event.npc.id === 7528) {
+            existing.rangedHealth = healthPct;
+          } else if (event.npc.id === 7529) {
+            existing.magicHealth = healthPct;
+          }
+          
+          healthByTick.set(event.tick, existing);
         }
       }
   
@@ -103,20 +160,34 @@ export default function VanguardsPage() {
   
       const maxTick = Math.max(...healthByTick.keys());
       const chartData = [];
-      let lastHealth = 0;
+      let lastMeleeHealth: number | undefined;
+      let lastRangedHealth: number | undefined;
+      let lastMagicHealth: number | undefined;
+      
       for (let tick = 0; tick <= maxTick; tick++) {
         const healthAtTick = healthByTick.get(tick);
-        if (healthAtTick !== undefined) {
-          lastHealth = healthAtTick;
+        if (healthAtTick) {
+          if (healthAtTick.meleeHealth !== undefined) {
+            lastMeleeHealth = healthAtTick.meleeHealth;
+          }
+          if (healthAtTick.rangedHealth !== undefined) {
+            lastRangedHealth = healthAtTick.rangedHealth;
+          }
+          if (healthAtTick.magicHealth !== undefined) {
+            lastMagicHealth = healthAtTick.magicHealth;
+          }
         }
+        
         chartData.push({
           tick,
-          bossHealthPercentage: lastHealth,
+          meleeHealth: lastMeleeHealth,
+          rangedHealth: lastRangedHealth,
+          magicHealth: lastMagicHealth,
         });
       }
   
       return chartData;
-    }, [events, npcState]);
+    }, [events, npcState, totalTicks]);
   
     const { entitiesByTick, preloads } = useMapEntities(
       challenge,
@@ -208,11 +279,12 @@ export default function VanguardsPage() {
       <div className={bossStyles.charts}>
         <Card
           className={bossStyles.chart}
-          header={{ title: "Vanguard's Health By Tick" }}
+          header={{ title: "Vanguards Health By Tick" }}
         >
-          <BossPageDPSTimeline
+          <MultiBossDpsTimeline
             currentTick={currentTick}
-            data={bossHealthChartData}
+            data={vanguardsHealthChartData}
+            bosses={vanguardBosses}
             width="100%"
             height="100%"
           />

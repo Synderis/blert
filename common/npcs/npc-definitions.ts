@@ -741,7 +741,7 @@ const ICE_DEMON: NpcDefinition = {
   shortName: 'Ice Demon',
   canonicalId: NpcId.ICE_DEMON_1,
   semanticId: false,
-  size: 5,
+  size: 2,
   mode: ChallengeMode.NO_MODE,
   maxSpeed: 0,
 };
@@ -751,7 +751,7 @@ const LIZARDMAN_SHAMAN: NpcDefinition = {
   shortName: 'Shaman',
   canonicalId: NpcId.LIZARDMAN_SHAMAN_1,
   semanticId: false,
-  size: 2,
+  size: 3,
   mode: ChallengeMode.NO_MODE,
   maxSpeed: 1,
 };
@@ -761,7 +761,7 @@ const VANGUARD: NpcDefinition = {
   shortName: 'Vanguard',
   canonicalId: NpcId.VANGUARD_MELEE,
   semanticId: true,
-  size: 4,
+  size: 3,
   mode: ChallengeMode.NO_MODE,
   maxSpeed: 1,
 };
@@ -781,7 +781,7 @@ const ABYSSAL_PORTAL: NpcDefinition = {
   shortName: 'Portal',
   canonicalId: NpcId.ABYSSAL_PORTAL,
   semanticId: false,
-  size: 3,
+  size: 4,
   mode: ChallengeMode.NO_MODE,
   maxSpeed: 0,
 };
@@ -811,7 +811,7 @@ const GUARDIAN: NpcDefinition = {
   shortName: 'Guardian',
   canonicalId: NpcId.GUARDIAN_1_LIVE,
   semanticId: true,
-  size: 5,
+  size: 2,
   mode: ChallengeMode.NO_MODE,
   maxSpeed: 0,
 };
@@ -831,7 +831,7 @@ const GLOWING_CRYSTAL: NpcDefinition = {
   shortName: 'Crystal',
   canonicalId: NpcId.GLOWING_CRYSTAL,
   semanticId: false,
-  size: 3,
+  size: 4,
   mode: ChallengeMode.NO_MODE,
   maxSpeed: 0,
 };
@@ -851,7 +851,7 @@ const MUTTADILE_LARGE: NpcDefinition = {
   shortName: 'Big muttadile',
   canonicalId: NpcId.MUTTADILE_LARGE_1,
   semanticId: false,
-  size: 4,
+  size: 5,
   mode: ChallengeMode.NO_MODE,
   maxSpeed: 1,
 };
@@ -871,7 +871,7 @@ const OLM_MAGE_HAND: NpcDefinition = {
   shortName: 'Olm mage hand',
   canonicalId: NpcId.OLM_MAGE_HAND_1,
   semanticId: false,
-  size: 3,
+  size: 5,
   mode: ChallengeMode.NO_MODE,
   maxSpeed: 0,
 };
@@ -881,7 +881,7 @@ const OLM_MELEE_HAND: NpcDefinition = {
   shortName: 'Olm melee hand',
   canonicalId: NpcId.OLM_MELEE_HAND_1,
   semanticId: false,
-  size: 3,
+  size: 5,
   mode: ChallengeMode.NO_MODE,
   maxSpeed: 0,
 };
@@ -891,7 +891,7 @@ const OLM_HEAD: NpcDefinition = {
   shortName: 'Olm head',
   canonicalId: NpcId.OLM_HEAD_1,
   semanticId: false,
-  size: 4,
+  size: 5,
   mode: ChallengeMode.NO_MODE,
   maxSpeed: 0,
 };

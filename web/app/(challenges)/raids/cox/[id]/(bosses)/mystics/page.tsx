@@ -15,8 +15,8 @@ import { useContext, useMemo } from 'react';
 import BossFightOverview from '@/components/boss-fight-overview';
 import BossPageAttackTimeline from '@/components/boss-page-attack-timeline';
 import BossPageControls from '@/components/boss-page-controls';
-import BossPageDPSTimeline from '@/components/boss-page-dps-timeline';
 import BossPageParty from '@/components/boss-page-party';
+import MultiBossDpsTimeline, { BossDefinition } from '@/components/multi-boss-dps-timeline';
 import BossPageReplay from '@/components/boss-page-replay';
 import Card from '@/components/card';
 import { MapDefinition } from '@/components/map-renderer';
@@ -67,34 +67,91 @@ export default function MysticsPage() {
 
   const { setSelectedPlayer, selectedPlayer } = useContext(ActorContext);
 
+  const mysticBosses: BossDefinition[] = [
+    { name: 'Mystic 1', dataKey: 'mystic1Health', color: '#ef4444' },
+    { name: 'Mystic 2', dataKey: 'mystic2Health', color: '#22c55e' },
+    { name: 'Mystic 3', dataKey: 'mystic3Health', color: '#3b82f6' },
+  ];
+
   const bossHealthChartData = useMemo(() => {
-    let mystic: EnhancedRoomNpc | null = null;
-    const iter = npcState.values();
-    for (let npc = iter.next(); !npc.done; npc = iter.next()) {
-      if (Npc.isSkeletalMystic(npc.value.spawnNpcId)) {
-        mystic = npc.value;
-        break;
+    // Collect mystics by NPC ID (7604, 7605, 7606)
+    let mystic1: EnhancedRoomNpc | null = null;
+    let mystic2: EnhancedRoomNpc | null = null;
+    let mystic3: EnhancedRoomNpc | null = null;
+    
+    for (const npc of npcState.values()) {
+      if (npc.spawnNpcId === 7604) {
+        mystic1 = npc;
+      } else if (npc.spawnNpcId === 7605) {
+        mystic2 = npc;
+      } else if (npc.spawnNpcId === 7606) {
+        mystic3 = npc;
       }
     }
 
-    if (mystic !== null) {
-      return mystic.stateByTick.map((state, tick) => ({
-        tick,
-        bossHealthPercentage: state?.hitpoints.percentage() ?? 0,
-      }));
+    if (mystic1 || mystic2 || mystic3) {
+      // Calculate health percentage for each mystic
+      const chartData = [];
+      for (let tick = 0; tick < totalTicks; tick++) {
+        const tickData: {
+          tick: number;
+          mystic1Health?: number;
+          mystic2Health?: number;
+          mystic3Health?: number;
+        } = { tick };
+        
+        if (mystic1) {
+          const state = mystic1.stateByTick[tick];
+          if (state) {
+            tickData.mystic1Health = state.hitpoints.percentage();
+          }
+        }
+        
+        if (mystic2) {
+          const state = mystic2.stateByTick[tick];
+          if (state) {
+            tickData.mystic2Health = state.hitpoints.percentage();
+          }
+        }
+        
+        if (mystic3) {
+          const state = mystic3.stateByTick[tick];
+          if (state) {
+            tickData.mystic3Health = state.hitpoints.percentage();
+          }
+        }
+        
+        chartData.push(tickData);
+      }
+      return chartData;
     }
 
-    const healthByTick = new Map<number, number>();
+    // Fallback to event-based tracking if state isn't available
+    const healthByTick = new Map<number, {
+      mystic1Health?: number;
+      mystic2Health?: number;
+      mystic3Health?: number;
+    }>();
+    
     for (const event of events) {
       if (
         event.type === EventType.NPC_UPDATE &&
         event.npc !== undefined &&
         Npc.isSkeletalMystic(event.npc.id)
       ) {
-        healthByTick.set(
-          event.tick,
-          SkillLevel.fromRaw(event.npc.hitpoints).percentage(),
-        );
+        const existing = healthByTick.get(event.tick) ?? {};
+        const skillLevel = SkillLevel.fromRaw(event.npc.hitpoints);
+        const healthPct = skillLevel.percentage();
+        
+        if (event.npc.id === 7604) {
+          existing.mystic1Health = healthPct;
+        } else if (event.npc.id === 7605) {
+          existing.mystic2Health = healthPct;
+        } else if (event.npc.id === 7606) {
+          existing.mystic3Health = healthPct;
+        }
+        
+        healthByTick.set(event.tick, existing);
       }
     }
 
@@ -104,20 +161,34 @@ export default function MysticsPage() {
 
     const maxTick = Math.max(...healthByTick.keys());
     const chartData = [];
-    let lastHealth = 0;
+    let lastMystic1Health: number | undefined;
+    let lastMystic2Health: number | undefined;
+    let lastMystic3Health: number | undefined;
+    
     for (let tick = 0; tick <= maxTick; tick++) {
       const healthAtTick = healthByTick.get(tick);
-      if (healthAtTick !== undefined) {
-        lastHealth = healthAtTick;
+      if (healthAtTick) {
+        if (healthAtTick.mystic1Health !== undefined) {
+          lastMystic1Health = healthAtTick.mystic1Health;
+        }
+        if (healthAtTick.mystic2Health !== undefined) {
+          lastMystic2Health = healthAtTick.mystic2Health;
+        }
+        if (healthAtTick.mystic3Health !== undefined) {
+          lastMystic3Health = healthAtTick.mystic3Health;
+        }
       }
+      
       chartData.push({
         tick,
-        bossHealthPercentage: lastHealth,
+        mystic1Health: lastMystic1Health,
+        mystic2Health: lastMystic2Health,
+        mystic3Health: lastMystic3Health,
       });
     }
 
     return chartData;
-  }, [events, npcState]);
+  }, [events, npcState, totalTicks]);
 
   const { entitiesByTick, preloads } = useMapEntities(
     challenge,
@@ -212,11 +283,12 @@ export default function MysticsPage() {
       <div className={bossStyles.charts}>
         <Card
           className={bossStyles.chart}
-          header={{ title: "Skeletal Mystic's Health By Tick" }}
+          header={{ title: "Skeletal Mystics Health By Tick" }}
         >
-          <BossPageDPSTimeline
+          <MultiBossDpsTimeline
             currentTick={currentTick}
             data={bossHealthChartData}
+            bosses={mysticBosses}
             width="100%"
             height="100%"
           />

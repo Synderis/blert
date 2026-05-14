@@ -15,8 +15,9 @@ import { useContext, useMemo } from 'react';
 import BossFightOverview from '@/components/boss-fight-overview';
 import BossPageAttackTimeline from '@/components/boss-page-attack-timeline';
 import BossPageControls from '@/components/boss-page-controls';
-import BossPageDPSTimeline from '@/components/boss-page-dps-timeline';
 import BossPageParty from '@/components/boss-page-party';
+import MultiBossDpsTimeline from '@/components/multi-boss-dps-timeline';
+import type { BossDefinition } from '@/components/multi-boss-dps-timeline';
 import BossPageReplay from '@/components/boss-page-replay';
 import Card from '@/components/card';
 import { MapDefinition } from '@/components/map-renderer';
@@ -67,34 +68,76 @@ export default function GuardiansPage() {
 
   const { setSelectedPlayer, selectedPlayer } = useContext(ActorContext);
 
+  const guardianBosses: BossDefinition[] = [
+    { name: 'Guardian 1', dataKey: 'guardian1Health', color: '#ef4444' },
+    { name: 'Guardian 2', dataKey: 'guardian2Health', color: '#22c55e' },
+  ];
+
   const bossHealthChartData = useMemo(() => {
-    let guardian: EnhancedRoomNpc | null = null;
-    const iter = npcState.values();
-    for (let npc = iter.next(); !npc.done; npc = iter.next()) {
-      if (Npc.isGuardian(npc.value.spawnNpcId)) {
-        guardian = npc.value;
-        break;
+    // Collect guardians by NPC ID (7569/7571=guardian1, 7570/7572=guardian2)
+    let guardian1: EnhancedRoomNpc | null = null;
+    let guardian2: EnhancedRoomNpc | null = null;
+    
+    for (const npc of npcState.values()) {
+      if (npc.spawnNpcId === 7569 || npc.spawnNpcId === 7571) {
+        guardian1 = npc;
+      } else if (npc.spawnNpcId === 7570 || npc.spawnNpcId === 7572) {
+        guardian2 = npc;
       }
     }
 
-    if (guardian !== null) {
-      return guardian.stateByTick.map((state, tick) => ({
-        tick,
-        bossHealthPercentage: state?.hitpoints.percentage() ?? 0,
-      }));
+    if (guardian1 || guardian2) {
+      // Calculate health percentage for each guardian
+      const chartData = [];
+      for (let tick = 0; tick < totalTicks; tick++) {
+        const tickData: {
+          tick: number;
+          guardian1Health?: number;
+          guardian2Health?: number;
+        } = { tick };
+        
+        if (guardian1) {
+          const state = guardian1.stateByTick[tick];
+          if (state) {
+            tickData.guardian1Health = state.hitpoints.percentage();
+          }
+        }
+        
+        if (guardian2) {
+          const state = guardian2.stateByTick[tick];
+          if (state) {
+            tickData.guardian2Health = state.hitpoints.percentage();
+          }
+        }
+        
+        chartData.push(tickData);
+      }
+      return chartData;
     }
 
-    const healthByTick = new Map<number, number>();
+    // Fallback to event-based tracking if state isn't available
+    const healthByTick = new Map<number, {
+      guardian1Health?: number;
+      guardian2Health?: number;
+    }>();
+    
     for (const event of events) {
       if (
         event.type === EventType.NPC_UPDATE &&
         event.npc !== undefined &&
         Npc.isGuardian(event.npc.id)
       ) {
-        healthByTick.set(
-          event.tick,
-          SkillLevel.fromRaw(event.npc.hitpoints).percentage(),
-        );
+        const existing = healthByTick.get(event.tick) ?? {};
+        const skillLevel = SkillLevel.fromRaw(event.npc.hitpoints);
+        const healthPct = skillLevel.percentage();
+        
+        if (event.npc.id === 7569 || event.npc.id === 7571) {
+          existing.guardian1Health = healthPct;
+        } else if (event.npc.id === 7570 || event.npc.id === 7572) {
+          existing.guardian2Health = healthPct;
+        }
+        
+        healthByTick.set(event.tick, existing);
       }
     }
 
@@ -104,20 +147,29 @@ export default function GuardiansPage() {
 
     const maxTick = Math.max(...healthByTick.keys());
     const chartData = [];
-    let lastHealth = 0;
+    let lastGuardian1Health: number | undefined;
+    let lastGuardian2Health: number | undefined;
+    
     for (let tick = 0; tick <= maxTick; tick++) {
       const healthAtTick = healthByTick.get(tick);
-      if (healthAtTick !== undefined) {
-        lastHealth = healthAtTick;
+      if (healthAtTick) {
+        if (healthAtTick.guardian1Health !== undefined) {
+          lastGuardian1Health = healthAtTick.guardian1Health;
+        }
+        if (healthAtTick.guardian2Health !== undefined) {
+          lastGuardian2Health = healthAtTick.guardian2Health;
+        }
       }
+      
       chartData.push({
         tick,
-        bossHealthPercentage: lastHealth,
+        guardian1Health: lastGuardian1Health,
+        guardian2Health: lastGuardian2Health,
       });
     }
 
     return chartData;
-  }, [events, npcState]);
+  }, [events, npcState, totalTicks]);
 
   const { entitiesByTick, preloads } = useMapEntities(
     challenge,
@@ -212,11 +264,12 @@ export default function GuardiansPage() {
       <div className={bossStyles.charts}>
         <Card
           className={bossStyles.chart}
-          header={{ title: "Guardian's Health By Tick" }}
+          header={{ title: "Guardians Health By Tick" }}
         >
-          <BossPageDPSTimeline
+          <MultiBossDpsTimeline
             currentTick={currentTick}
             data={bossHealthChartData}
+            bosses={guardianBosses}
             width="100%"
             height="100%"
           />

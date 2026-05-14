@@ -15,8 +15,9 @@ import { useContext, useMemo } from 'react';
 import BossFightOverview from '@/components/boss-fight-overview';
 import BossPageAttackTimeline from '@/components/boss-page-attack-timeline';
 import BossPageControls from '@/components/boss-page-controls';
-import BossPageDPSTimeline from '@/components/boss-page-dps-timeline';
 import BossPageParty from '@/components/boss-page-party';
+import MultiBossDpsTimeline from '@/components/multi-boss-dps-timeline';
+import type { BossDefinition } from '@/components/multi-boss-dps-timeline';
 import BossPageReplay from '@/components/boss-page-replay';
 import Card from '@/components/card';
 import { MapDefinition } from '@/components/map-renderer';
@@ -67,34 +68,90 @@ export default function OlmPage() {
 
   const { setSelectedPlayer, selectedPlayer } = useContext(ActorContext);
 
+  const olmBosses: BossDefinition[] = [
+    { name: 'Head', dataKey: 'headHealth', color: '#ef4444' },
+    { name: 'Mage Hand (Left)', dataKey: 'mageHandHealth', color: '#3b82f6' },
+    { name: 'Melee Hand (Right)', dataKey: 'meleeHandHealth', color: '#22c55e' },
+  ];
+
   const bossHealthChartData = useMemo(() => {
-    let olm: EnhancedRoomNpc | null = null;
-    const iter = npcState.values();
-    for (let npc = iter.next(); !npc.done; npc = iter.next()) {
-      if (Npc.isOlmHead(npc.value.spawnNpcId)) {
-        olm = npc.value;
-        break;
+    // Collect Olm parts by NPC ID
+    let olmHead: EnhancedRoomNpc | null = null;
+    let mageHand: EnhancedRoomNpc | null = null;
+    let meleeHand: EnhancedRoomNpc | null = null;
+    
+    for (const npc of npcState.values()) {
+      if (npc.spawnNpcId === 7551 || npc.spawnNpcId === 7554) {
+        olmHead = npc;
+      } else if (npc.spawnNpcId === 7550 || npc.spawnNpcId === 7553) {
+        mageHand = npc;
+      } else if (npc.spawnNpcId === 7552 || npc.spawnNpcId === 7555) {
+        meleeHand = npc;
       }
     }
 
-    if (olm !== null) {
-      return olm.stateByTick.map((state, tick) => ({
-        tick,
-        bossHealthPercentage: state?.hitpoints.percentage() ?? 0,
-      }));
+    if (olmHead || mageHand || meleeHand) {
+      // Calculate health percentage for each Olm part
+      const chartData = [];
+      for (let tick = 0; tick < totalTicks; tick++) {
+        const tickData: {
+          tick: number;
+          headHealth?: number;
+          mageHandHealth?: number;
+          meleeHandHealth?: number;
+        } = { tick };
+        
+        if (olmHead) {
+          const state = olmHead.stateByTick[tick];
+          if (state) {
+            tickData.headHealth = state.hitpoints.percentage();
+          }
+        }
+        
+        if (mageHand) {
+          const state = mageHand.stateByTick[tick];
+          if (state) {
+            tickData.mageHandHealth = state.hitpoints.percentage();
+          }
+        }
+        
+        if (meleeHand) {
+          const state = meleeHand.stateByTick[tick];
+          if (state) {
+            tickData.meleeHandHealth = state.hitpoints.percentage();
+          }
+        }
+        
+        chartData.push(tickData);
+      }
+      return chartData;
     }
 
-    const healthByTick = new Map<number, number>();
+    // Fallback to event-based tracking if state isn't available
+    const healthByTick = new Map<number, {
+      headHealth?: number;
+      mageHandHealth?: number;
+      meleeHandHealth?: number;
+    }>();
+    
     for (const event of events) {
       if (
         event.type === EventType.NPC_UPDATE &&
-        event.npc !== undefined &&
-        Npc.isOlmHead(event.npc.id)
+        event.npc !== undefined
       ) {
-        healthByTick.set(
-          event.tick,
-          SkillLevel.fromRaw(event.npc.hitpoints).percentage(),
-        );
+        const existing = healthByTick.get(event.tick) ?? {};
+        const skillLevel = SkillLevel.fromRaw(event.npc.hitpoints);
+        const healthPct = skillLevel.percentage();
+        
+        if (Npc.isOlmHead(event.npc.id)) {
+          existing.headHealth = healthPct;
+        } else if (Npc.isOlmMageHand(event.npc.id)) {
+          existing.mageHandHealth = healthPct;
+        } else if (Npc.isOlmMeleeHand(event.npc.id)) {
+          existing.meleeHandHealth = healthPct;
+        }
+        
+        healthByTick.set(event.tick, existing);
       }
     }
 
@@ -104,20 +161,34 @@ export default function OlmPage() {
 
     const maxTick = Math.max(...healthByTick.keys());
     const chartData = [];
-    let lastHealth = 0;
+    let lastHeadHealth: number | undefined;
+    let lastMageHandHealth: number | undefined;
+    let lastMeleeHandHealth: number | undefined;
+    
     for (let tick = 0; tick <= maxTick; tick++) {
       const healthAtTick = healthByTick.get(tick);
-      if (healthAtTick !== undefined) {
-        lastHealth = healthAtTick;
+      if (healthAtTick) {
+        if (healthAtTick.headHealth !== undefined) {
+          lastHeadHealth = healthAtTick.headHealth;
+        }
+        if (healthAtTick.mageHandHealth !== undefined) {
+          lastMageHandHealth = healthAtTick.mageHandHealth;
+        }
+        if (healthAtTick.meleeHandHealth !== undefined) {
+          lastMeleeHandHealth = healthAtTick.meleeHandHealth;
+        }
       }
+      
       chartData.push({
         tick,
-        bossHealthPercentage: lastHealth,
+        headHealth: lastHeadHealth,
+        mageHandHealth: lastMageHandHealth,
+        meleeHandHealth: lastMeleeHandHealth,
       });
     }
 
     return chartData;
-  }, [events, npcState]);
+  }, [events, npcState, totalTicks]);
 
   const { entitiesByTick, preloads } = useMapEntities(
     challenge,
@@ -212,11 +283,12 @@ export default function OlmPage() {
       <div className={bossStyles.charts}>
         <Card
           className={bossStyles.chart}
-          header={{ title: "Great Olm's Health By Tick" }}
+          header={{ title: "Great Olm Health By Tick" }}
         >
-          <BossPageDPSTimeline
+          <MultiBossDpsTimeline
             currentTick={currentTick}
             data={bossHealthChartData}
+            bosses={olmBosses}
             width="100%"
             height="100%"
           />
