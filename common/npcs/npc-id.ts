@@ -220,7 +220,7 @@ export enum NpcId {
   VANGUARD_DIG = 7526,
   VANGUARD_MELEE = 7527,
   VANGUARD_RANGED = 7528,
-  VANGUARD_MAGIC = 7529,
+  VANGUARD_MAGE = 7529,
 
   CORRUPTED_SCAVENGER = 7602,
   ABYSSAL_PORTAL = 7533,
@@ -388,7 +388,7 @@ export class Npc {
     NpcId.VANGUARD_DIG,
     NpcId.VANGUARD_MELEE,
     NpcId.VANGUARD_RANGED,
-    NpcId.VANGUARD_MAGIC,
+    NpcId.VANGUARD_MAGE,
   ];
 
   static isVanguard(npcId: number): boolean {
@@ -396,11 +396,11 @@ export class Npc {
   }
 
   static isCorruptedScavenger(npcId: number): boolean {
-    return npcId === NpcId.CORRUPTED_SCAVENGER;
+    return npcId === (NpcId.CORRUPTED_SCAVENGER as number);
   }
 
   static isAbyssalPortal(npcId: number): boolean {
-    return npcId === NpcId.ABYSSAL_PORTAL;
+    return npcId === (NpcId.ABYSSAL_PORTAL as number);
   }
 
   private static readonly DEATHLY_IDS: number[] = [
@@ -434,7 +434,7 @@ export class Npc {
   }
 
   static isGlowingCrystal(npcId: number): boolean {
-    return npcId === NpcId.GLOWING_CRYSTAL;
+    return npcId === (NpcId.GLOWING_CRYSTAL as number);
   }
 
   private static readonly SKELETAL_MYSTIC_IDS: number[] = [

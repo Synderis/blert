@@ -5,6 +5,7 @@ import {
   CoxChallengeStats,
   CoxRooms,
   DataRepository,
+  NpcAttack,
   PlayerAttack,
   PriceTracker,
   SplitType,
@@ -16,7 +17,7 @@ import { Event } from '@blert/common/generated/event_pb';
 
 import ChallengeProcessor, { InitializedFields } from './challenge-processor';
 import sql from '../db';
-import logger from '../log';
+// import logger from '../log';
 import { MergedEvents } from '../merging';
 
 function roomsKey(stage: Stage): keyof CoxRooms {
@@ -113,8 +114,8 @@ export default class ChambersProcessor extends ChallengeProcessor {
     ]);
   }
 
-  protected override onFinish(finalChallengeTicks: number): Promise<void> {
-    this.setSplit(SplitType.COX_CHALLENGE, finalChallengeTicks);
+  protected override onFinish(_finalChallengeTicks: number): Promise<void> {
+    this.setSplit(SplitType.COX_CHALLENGE, this.getOverallTicks());
     this.setSplit(SplitType.COX_OVERALL, this.getOverallTicks());
 
     for (const username of this.getParty()) {
@@ -292,8 +293,9 @@ export default class ChambersProcessor extends ChallengeProcessor {
 
       case Event.Type.PLAYER_ATTACK:
         // Handle player attacks for tracking purposes
-        await this.processPlayerAttack(event);
+        this.processPlayerAttack(event);
         break;
+
       case Event.Type.NPC_SPAWN:
         // Handle NPC spawns
         break;
@@ -303,14 +305,8 @@ export default class ChambersProcessor extends ChallengeProcessor {
         break;
 
       case Event.Type.NPC_ATTACK:
-        // Handle NPC attacks
+        this.processNpcAttack(event);
         break;
-
-      // Add CoX-specific events here as needed
-      // Examples:
-      // case Event.Type.COX_OLM_PHASE:
-      // case Event.Type.COX_VASA_CRYSTAL_SPAWN:
-      // etc.
     }
 
     return Promise.resolve(true);
@@ -357,7 +353,7 @@ export default class ChambersProcessor extends ChallengeProcessor {
     `;
   }
 
-  private async processPlayerAttack(event: Event): Promise<void> {
+  private processPlayerAttack(event: Event): void {
     const username = event.getPlayer()?.getName();
     const attack = event.getPlayerAttack();
 
@@ -390,6 +386,78 @@ export default class ChambersProcessor extends ChallengeProcessor {
 
       case PlayerAttack.SCYTHE_UNCHARGED:
         stats.unchargedScytheSwings += 1;
+        break;
+    }
+  }
+
+  private processNpcAttack(event: Event): void {
+    const attack = event.getNpcAttack();
+    if (!attack) {
+      return;
+    }
+
+    switch (attack.getAttack()) {
+      // Tekton attacks
+      case NpcAttack.COX_TEKTON_ANVIL:
+      case NpcAttack.COX_TEKTON_STAB:
+      case NpcAttack.COX_TEKTON_SLASH:
+      case NpcAttack.COX_TEKTON_HAMMER:
+      case NpcAttack.COX_TEKTON_LEFT_ANVIL:
+        break;
+
+      // Ice Demon attacks
+      case NpcAttack.COX_ICE_DEMON_AUTO:
+        break;
+
+      // Shamans attacks
+      case NpcAttack.COX_SHAMANS_BARNEYS:
+      case NpcAttack.COX_SHAMANS_BLOB:
+      case NpcAttack.COX_SHAMANS_JUMP:
+      case NpcAttack.COX_SHAMANS_MELEE:
+        break;
+
+      // Vanguards attacks
+      case NpcAttack.COX_VANGS_SPAWN:
+      case NpcAttack.COX_VANGS_MAGE:
+      case NpcAttack.COX_VANGS_MELEE:
+      case NpcAttack.COX_VANGS_RANGED:
+      case NpcAttack.COX_VANGS_HEAL:
+        break;
+
+      // Thieving attacks
+      case NpcAttack.COX_THIEVING_CHOMP:
+      case NpcAttack.COX_THIEVING_SLEEP:
+        break;
+
+      // Tightrope attacks
+      case NpcAttack.COX_TIGHTROPE_MAGE:
+      case NpcAttack.COX_TIGHTROPE_RANGE:
+        break;
+
+      // Guardians attacks
+      case NpcAttack.COX_GUARDIANS_SWIPE:
+      case NpcAttack.COX_GUARDIANS_ROCK_FALL:
+        break;
+
+      // Vasa attacks
+      case NpcAttack.COX_VASA_SPAWN:
+      case NpcAttack.COX_VASA_TELEPORT:
+      case NpcAttack.COX_VASA_TELEPORT_BOMBS:
+      case NpcAttack.COX_VASA_AT_CRYSTAL:
+      case NpcAttack.COX_VASA_LEAVES_CRYSTAL:
+        break;
+
+      // Mystics attacks
+      case NpcAttack.COX_MYSTICS_MAGE:
+      case NpcAttack.COX_MYSTICS_MELEE:
+        break;
+
+      // Muttadile attacks
+      case NpcAttack.COX_MUTTA_MELEE:
+      case NpcAttack.COX_MUTTA_RANGE:
+      case NpcAttack.COX_MUTTA_LARGE_LAKE:
+      case NpcAttack.COX_MUTTA_LARGE_MAGE:
+      case NpcAttack.COX_MUTTA_LARGE_STOMP:
         break;
     }
   }

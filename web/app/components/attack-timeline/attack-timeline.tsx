@@ -820,9 +820,14 @@ export function AttackTimeline(props: AttackTimelineProps) {
   const attackTimelineParticipants: [RowType, string, number][] = [];
   npcs.forEach((npc, roomId) => {
     if (npc.hasAttacks) {
+      // Use the current NPC ID from the first state where the ID differs from spawn ID,
+      // falling back to spawnNpcId if no transformation occurred.
+      // This handles NPCs that transform (e.g., vanguards spawning as 7525 then becoming 7527/7528/7529).
+      const displayId = npc.stateByTick.find((state) => state?.id !== undefined && state.id !== npc.spawnNpcId)?.id ?? npc.spawnNpcId;
+      
       attackTimelineParticipants.push([
         'npc',
-        getNpcDefinition(npc.spawnNpcId)?.shortName ?? 'Unknown',
+        getNpcDefinition(displayId)?.shortName ?? 'Unknown',
         roomId,
       ]);
     }

@@ -22,6 +22,8 @@ export type NpcDefinition = {
   mode: ChallengeMode;
   /** Maximum tiles moved per tick. */
   maxSpeed: number;
+  /** Hex color code for map selection highlight. */
+  selectionColor?: string;
 };
 
 const JAL_NIB: NpcDefinition = {
@@ -726,14 +728,57 @@ const LIZARDMAN_SHAMAN: NpcDefinition = {
   maxSpeed: 1,
 };
 
-const VANGUARD: NpcDefinition = {
+const VANGUARD_INITIAL: NpcDefinition = {
   fullName: 'Vanguard',
   shortName: 'Vanguard',
-  canonicalId: NpcId.VANGUARD_MELEE,
-  semanticId: true,
+  canonicalId: NpcId.VANGUARD_INITIAL,
+  semanticId: false,
   size: 3,
   mode: ChallengeMode.NO_MODE,
   maxSpeed: 1,
+};
+
+const VANGUARD_DIG: NpcDefinition = {
+  fullName: 'Vanguard',
+  shortName: 'Vanguard',
+  canonicalId: NpcId.VANGUARD_DIG,
+  semanticId: false,
+  size: 3,
+  mode: ChallengeMode.NO_MODE,
+  maxSpeed: 1,
+};
+
+const VANGUARD_MELEE: NpcDefinition = {
+  fullName: 'Melee Vanguard',
+  shortName: 'Melee',
+  canonicalId: NpcId.VANGUARD_MELEE,
+  semanticId: false,
+  size: 3,
+  mode: ChallengeMode.NO_MODE,
+  maxSpeed: 1,
+  selectionColor: '#ef4444',
+};
+
+const VANGUARD_RANGED: NpcDefinition = {
+  fullName: 'Ranged Vanguard',
+  shortName: 'Ranged',
+  canonicalId: NpcId.VANGUARD_RANGED,
+  semanticId: false,
+  size: 3,
+  mode: ChallengeMode.NO_MODE,
+  maxSpeed: 1,
+  selectionColor: '#22c55e',
+};
+
+const VANGUARD_MAGE: NpcDefinition = {
+  fullName: 'Mage Vanguard',
+  shortName: 'Mage',
+  canonicalId: NpcId.VANGUARD_MAGE,
+  semanticId: false,
+  size: 3,
+  mode: ChallengeMode.NO_MODE,
+  maxSpeed: 1,
+  selectionColor: '#3b82f6',
 };
 
 const CORRUPTED_SCAVENGER: NpcDefinition = {
@@ -844,6 +889,7 @@ const OLM_MAGE_HAND: NpcDefinition = {
   size: 5,
   mode: ChallengeMode.NO_MODE,
   maxSpeed: 0,
+  selectionColor: '#3b82f6',
 };
 
 const OLM_MELEE_HAND: NpcDefinition = {
@@ -854,6 +900,7 @@ const OLM_MELEE_HAND: NpcDefinition = {
   size: 5,
   mode: ChallengeMode.NO_MODE,
   maxSpeed: 0,
+  selectionColor: '#ef4444',
 };
 
 const OLM_HEAD: NpcDefinition = {
@@ -864,6 +911,7 @@ const OLM_HEAD: NpcDefinition = {
   size: 5,
   mode: ChallengeMode.NO_MODE,
   maxSpeed: 0,
+  selectionColor: '#22c55e',
 };
 
 const NPC_DEFINITIONS: Record<number, NpcDefinition> = {
@@ -1095,14 +1143,18 @@ const NPC_DEFINITIONS: Record<number, NpcDefinition> = {
   [NpcId.LIZARDMAN_SHAMAN_1]: LIZARDMAN_SHAMAN,
   [NpcId.LIZARDMAN_SHAMAN_2]: LIZARDMAN_SHAMAN,
 
-  [NpcId.VANGUARD_INITIAL]: VANGUARD,
-  [NpcId.VANGUARD_DIG]: VANGUARD,
-  [NpcId.VANGUARD_MELEE]: VANGUARD,
-  [NpcId.VANGUARD_RANGED]: VANGUARD,
-  [NpcId.VANGUARD_MAGIC]: VANGUARD,
+  [NpcId.VANGUARD_INITIAL]: VANGUARD_INITIAL,
+  [NpcId.VANGUARD_DIG]: VANGUARD_DIG,
+  [NpcId.VANGUARD_MELEE]: VANGUARD_MELEE,
+  [NpcId.VANGUARD_RANGED]: VANGUARD_RANGED,
+  [NpcId.VANGUARD_MAGE]: VANGUARD_MAGE,
 
   [NpcId.CORRUPTED_SCAVENGER]: CORRUPTED_SCAVENGER,
+
   [NpcId.ABYSSAL_PORTAL]: ABYSSAL_PORTAL,
+
+  [NpcId.DEATHLY_RANGER]: DEATHLY_RANGER,
+  [NpcId.DEATHLY_MAGE]: DEATHLY_MAGE,
 
   [NpcId.GUARDIAN_1_LIVE]: GUARDIAN,
   [NpcId.GUARDIAN_1_DEAD]: GUARDIAN,
