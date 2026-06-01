@@ -69,9 +69,9 @@ export default function OlmPage() {
   const { setSelectedPlayer, selectedPlayer } = useContext(ActorContext);
 
   const olmBosses: BossDefinition[] = [
-    { name: 'Head', dataKey: 'headHealth', color: '#ef4444' },
+    { name: 'Head', dataKey: 'headHealth', color: '#22c55e' },
     { name: 'Mage Hand (Left)', dataKey: 'mageHandHealth', color: '#3b82f6' },
-    { name: 'Melee Hand (Right)', dataKey: 'meleeHandHealth', color: '#22c55e' },
+    { name: 'Melee Hand (Right)', dataKey: 'meleeHandHealth', color: '#ef4444' },
   ];
 
   const bossHealthChartData = useMemo(() => {
