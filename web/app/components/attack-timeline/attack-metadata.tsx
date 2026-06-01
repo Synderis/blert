@@ -1327,6 +1327,142 @@ export const NPC_ATTACK_METADATA: Record<NpcAttack, NpcAttackMetadata> = {
     imageUrl: '/images/mokhaiotl/melee.png',
     description: basicDescription('a melee attack'),
   },
+
+  // Chambers of Xeric attacks
+  [NpcAttack.COX_TEKTON_ANVIL]: {
+    imageUrl: '/images/mokhaiotl/shockwave.png',
+    description: () => <span>Moved to anvil</span>,
+  },
+  [NpcAttack.COX_TEKTON_STAB]: {
+    imageUrl: '/images/mokhaiotl/shockwave.png',
+    description: basicDescription('a stab'),
+  },
+  [NpcAttack.COX_TEKTON_SLASH]: {
+    imageUrl: '/images/mokhaiotl/shockwave.png',
+    description: basicDescription('a slash'),
+  },
+  [NpcAttack.COX_TEKTON_HAMMER]: {
+    imageUrl: '/images/mokhaiotl/shockwave.png',
+    description: basicDescription('a hammer slam'),
+  },
+  [NpcAttack.COX_TEKTON_LEFT_ANVIL]: {
+    imageUrl: '/images/mokhaiotl/shockwave.png',
+    description: () => <span>Left anvil</span>,
+  },
+  [NpcAttack.COX_ICE_DEMON_AUTO]: {
+    imageUrl: '/images/mokhaiotl/shockwave.png',
+    description: basicDescription('an ice attack'),
+  },
+  [NpcAttack.COX_SHAMANS_BARNEYS]: {
+    imageUrl: '/images/cox/shamans/barney.png',
+    description: () => <span>Spawned barneys</span>,
+  },
+  [NpcAttack.COX_SHAMANS_BLOB]: {
+    imageUrl: '/images/mokhaiotl/shockwave.png',
+    description: () => <span>Threw a poison blob</span>,
+  },
+  [NpcAttack.COX_SHAMANS_JUMP]: {
+    imageUrl: '/images/mokhaiotl/shockwave.png',
+    description: () => <span>Jumped</span>,
+  },
+  [NpcAttack.COX_SHAMANS_MELEE]: {
+    imageUrl: '/images/mokhaiotl/shockwave.png',
+    description: basicDescription('a melee attack'),
+  },
+  [NpcAttack.COX_VANGS_SPAWN]: {
+    imageUrl: '/images/mokhaiotl/shockwave.png',
+    description: () => <span>Spawned</span>,
+  },
+  [NpcAttack.COX_VANGS_MAGE]: {
+    imageUrl: '/images/mokhaiotl/shockwave.png',
+    description: basicDescription('a magic attack'),
+  },
+  [NpcAttack.COX_VANGS_MELEE]: {
+    imageUrl: '/images/mokhaiotl/shockwave.png',
+    description: basicDescription('a melee attack'),
+  },
+  [NpcAttack.COX_VANGS_RANGED]: {
+    imageUrl: '/images/mokhaiotl/shockwave.png',
+    description: basicDescription('a ranged attack'),
+  },
+  [NpcAttack.COX_VANGS_HEAL]: {
+    imageUrl: '/images/mokhaiotl/shockwave.png',
+    description: () => <span>Healed</span>,
+  },
+  [NpcAttack.COX_THIEVING_CHOMP]: {
+    imageUrl: '/images/mokhaiotl/shockwave.png',
+    description: (target) => (
+      <span>Chomped{target ? <> {target}</> : ''}</span>
+    ),
+  },
+  [NpcAttack.COX_THIEVING_SLEEP]: {
+    imageUrl: '/images/mokhaiotl/shockwave.png',
+    description: () => <span>Fell asleep</span>,
+  },
+  [NpcAttack.COX_TIGHTROPE_MAGE]: {
+    imageUrl: '/images/mokhaiotl/shockwave.png',
+    description: basicDescription('a magic attack'),
+  },
+  [NpcAttack.COX_TIGHTROPE_RANGE]: {
+    imageUrl: '/images/mokhaiotl/shockwave.png',
+    description: basicDescription('a ranged attack'),
+  },
+  [NpcAttack.COX_GUARDIANS_SWIPE]: {
+    imageUrl: '/images/mokhaiotl/shockwave.png',
+    description: basicDescription('a swipe'),
+  },
+  [NpcAttack.COX_GUARDIANS_ROCK_FALL]: {
+    imageUrl: '/images/mokhaiotl/shockwave.png',
+    description: () => <span>Caused a rock fall</span>,
+  },
+  [NpcAttack.COX_VASA_SPAWN]: {
+    imageUrl: '/images/mokhaiotl/shockwave.png',
+    description: () => <span>Spawned</span>,
+  },
+  [NpcAttack.COX_VASA_TELEPORT]: {
+    imageUrl: '/images/mokhaiotl/shockwave.png',
+    description: () => <span>Teleported</span>,
+  },
+  [NpcAttack.COX_VASA_TELEPORT_BOMBS]: {
+    imageUrl: '/images/mokhaiotl/shockwave.png',
+    description: () => <span>Teleported (with bombs)</span>,
+  },
+  [NpcAttack.COX_VASA_AT_CRYSTAL]: {
+    imageUrl: '/images/mokhaiotl/shockwave.png',
+    description: () => <span>Reached crystal</span>,
+  },
+  [NpcAttack.COX_VASA_LEAVES_CRYSTAL]: {
+    imageUrl: '/images/mokhaiotl/shockwave.png',
+    description: () => <span>Left crystal</span>,
+  },
+  [NpcAttack.COX_MYSTICS_MAGE]: {
+    imageUrl: '/images/mokhaiotl/shockwave.png',
+    description: basicDescription('a magic attack'),
+  },
+  [NpcAttack.COX_MYSTICS_MELEE]: {
+    imageUrl: '/images/mokhaiotl/shockwave.png',
+    description: basicDescription('a melee attack'),
+  },
+  [NpcAttack.COX_MUTTA_MELEE]: {
+    imageUrl: '/images/mokhaiotl/shockwave.png',
+    description: basicDescription('a melee attack'),
+  },
+  [NpcAttack.COX_MUTTA_RANGE]: {
+    imageUrl: '/images/cox/muttadile/range.png',
+    description: basicDescription('a ranged attack'),
+  },
+  [NpcAttack.COX_MUTTA_LARGE_LAKE]: {
+    imageUrl: '/images/mokhaiotl/shockwave.png',
+    description: () => <span>Entered the lake</span>,
+  },
+  [NpcAttack.COX_MUTTA_LARGE_MAGE]: {
+    imageUrl: '/images/cox/muttadile/mage.png',
+    description: basicDescription('a magic attack'),
+  },
+  [NpcAttack.COX_MUTTA_LARGE_STOMP]: {
+    imageUrl: '/images/mokhaiotl/shockwave.png',
+    description: () => <span>Stomped</span>,
+  },
 };
 
 const DEFAULT_WEAPON_IDS = new Map<PlayerAttack, number>(

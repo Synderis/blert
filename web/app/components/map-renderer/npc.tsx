@@ -1,6 +1,6 @@
 'use client';
 
-import { Coords, Prayer, PrayerSet } from '@blert/common';
+import { Coords, Prayer, PrayerSet, getNpcDefinition } from '@blert/common';
 import { Billboard, Plane, Text, useTexture } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import { useRef, useMemo, useEffect, useState, Suspense } from 'react';
@@ -79,9 +79,18 @@ const fragmentShader = `
   }
 `;
 
-const SELECTED_COLOR = new THREE.Color('#5865f2');
 const HOVERED_COLOR = new THREE.Color('#f59e0b');
 const BORDER_COLOR = new THREE.Color('#c3c7c9');
+
+/**
+ * Get the selection color for an NPC based on its ID.
+ * Falls back to default color if NPC definition doesn't specify one.
+ */
+function getNpcSelectionColor(npcId: number): THREE.Color {
+  const definition = getNpcDefinition(npcId);
+  const colorHex = definition?.selectionColor ?? '#5865f2';
+  return new THREE.Color(colorHex);
+}
 
 function NpcFallback({ width, height }: { width: number; height: number }) {
   const matRef = useRef<THREE.MeshBasicMaterial>(null);
@@ -150,7 +159,7 @@ function NpcSpriteMesh({
   });
 
   const outlineMaterial = useMemo(() => {
-    const outlineColor = SELECTED_COLOR;
+    const outlineColor = getNpcSelectionColor(npcEntity.id);
     const image = spriteTexture.image as { width: number; height: number };
     return new THREE.ShaderMaterial({
       uniforms: {
@@ -175,7 +184,7 @@ function NpcSpriteMesh({
       transparent: true,
       side: THREE.DoubleSide,
     });
-  }, [spriteTexture]);
+  }, [spriteTexture, npcEntity.id]);
 
   useEffect(() => {
     outlineMaterial.uniforms.u_outlineThickness.value =
@@ -183,10 +192,11 @@ function NpcSpriteMesh({
     outlineMaterial.uniforms.u_isDimmed.value = isDimmed;
 
     if (isSelected) {
+      const selectedColor = getNpcSelectionColor(npcEntity.id);
       outlineMaterial.uniforms.u_outlineColor.value = new THREE.Vector4(
-        SELECTED_COLOR.r,
-        SELECTED_COLOR.g,
-        SELECTED_COLOR.b,
+        selectedColor.r,
+        selectedColor.g,
+        selectedColor.b,
         1.0,
       );
     } else if (isHovered) {
@@ -197,7 +207,7 @@ function NpcSpriteMesh({
         1.0,
       );
     }
-  }, [outlineMaterial, isSelected, isHovered, isDimmed]);
+  }, [outlineMaterial, isSelected, isHovered, isDimmed, npcEntity.id]);
 
   return (
     <mesh
@@ -431,7 +441,7 @@ export default function Npc({
   };
 
   const textColor = isSelected
-    ? SELECTED_COLOR.clone()
+    ? getNpcSelectionColor(npcEntity.id).clone()
     : isHovered
       ? HOVERED_COLOR.clone()
       : new THREE.Color('#ffffff');
