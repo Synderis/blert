@@ -27,6 +27,7 @@ import {
   EnhancedRoomNpc,
   useMapEntities,
   usePlayingState,
+  usePreloads,
   useStageEvents,
 } from '@/utils/boss-room-state';
 
@@ -51,6 +52,7 @@ export default function VespulaPage() {
     events,
     playerState,
     npcState,
+    bcf,
     loading,
   } = useStageEvents<CoxRaid>(Stage.COX_VESPULA);
 
@@ -65,7 +67,7 @@ export default function VespulaPage() {
     };
   }, [compact]);
 
-  const { setSelectedPlayer, selectedPlayer } = useContext(ActorContext);
+  const { setSelectedActor, selectedActor } = useContext(ActorContext);
 
   const bossHealthChartData = useMemo(() => {
     let abyssalPortal: EnhancedRoomNpc | null = null;
@@ -119,12 +121,13 @@ export default function VespulaPage() {
     return chartData;
   }, [events, npcState]);
 
-  const { entitiesByTick, preloads } = useMapEntities(
+  const getEntities = useMapEntities(
     challenge,
     playerState,
     npcState,
     totalTicks,
   );
+  const preloads = usePreloads(npcState, false);
 
   if (loading || challenge === null) {
     return <Loading />;
@@ -181,6 +184,7 @@ export default function VespulaPage() {
           playing={playing}
           playerState={playerState}
           timelineTicks={totalTicks}
+          bcf={bcf}
           updateTickOnPage={setTick}
           npcs={npcState}
           splits={[]}
@@ -190,7 +194,7 @@ export default function VespulaPage() {
 
       <div className={bossStyles.replayAndParty}>
         <BossPageReplay
-          entities={entitiesByTick.get(currentTick) ?? []}
+          entities={getEntities(currentTick)}
           preloads={preloads}
           mapDef={mapDefinition}
           playing={playing}
@@ -201,8 +205,8 @@ export default function VespulaPage() {
         />
         <BossPageParty
           playerTickState={playerTickState}
-          selectedPlayer={selectedPlayer}
-          setSelectedPlayer={setSelectedPlayer}
+          selectedActor={selectedActor}
+          setSelectedActor={setSelectedActor}
         />
       </div>
       <div className={bossStyles.charts}>

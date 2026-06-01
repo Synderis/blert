@@ -27,6 +27,7 @@ import {
   EnhancedRoomNpc,
   useMapEntities,
   usePlayingState,
+  usePreloads,
   useStageEvents,
 } from '@/utils/boss-room-state';
 
@@ -50,6 +51,7 @@ export default function VanguardsPage() {
     events,
     playerState,
     npcState,
+    bcf,
     loading,
   } = useStageEvents<CoxRaid>(Stage.COX_VANGUARDS);
 
@@ -64,7 +66,7 @@ export default function VanguardsPage() {
     };
   }, [compact]);
 
-  const { setSelectedPlayer, selectedPlayer } = useContext(ActorContext);
+  const { setSelectedActor, selectedActor } = useContext(ActorContext);
 
   const vanguardBosses: BossDefinition[] = [
     { name: 'Melee Vanguard', dataKey: 'meleeHealth', color: '#ef4444' },
@@ -189,12 +191,13 @@ export default function VanguardsPage() {
       return chartData;
     }, [events, npcState, totalTicks]);
   
-    const { entitiesByTick, preloads } = useMapEntities(
+    const getEntities = useMapEntities(
       challenge,
       playerState,
       npcState,
       totalTicks,
     );
+    const preloads = usePreloads(npcState, false);
   
     if (loading || challenge === null) {
       return <Loading />;
@@ -251,6 +254,7 @@ export default function VanguardsPage() {
           playing={playing}
           playerState={playerState}
           timelineTicks={totalTicks}
+          bcf={bcf}
           updateTickOnPage={setTick}
           npcs={npcState}
           splits={[]}
@@ -260,7 +264,7 @@ export default function VanguardsPage() {
 
       <div className={bossStyles.replayAndParty}>
         <BossPageReplay
-          entities={entitiesByTick.get(currentTick) ?? []}
+          entities={getEntities(currentTick)}
           preloads={preloads}
           mapDef={mapDefinition}
           playing={playing}
@@ -271,8 +275,8 @@ export default function VanguardsPage() {
         />
         <BossPageParty
           playerTickState={playerTickState}
-          selectedPlayer={selectedPlayer}
-          setSelectedPlayer={setSelectedPlayer}
+          selectedActor={selectedActor}
+          setSelectedActor={setSelectedActor}
         />
       </div>
 

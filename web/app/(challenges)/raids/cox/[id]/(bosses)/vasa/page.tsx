@@ -27,6 +27,7 @@ import {
   EnhancedRoomNpc,
   useMapEntities,
   usePlayingState,
+  usePreloads,
   useStageEvents,
 } from '@/utils/boss-room-state';
 
@@ -50,6 +51,7 @@ export default function VasaPage() {
     events,
     playerState,
     npcState,
+    bcf,
     loading,
   } = useStageEvents<CoxRaid>(Stage.COX_VASA);
 
@@ -64,7 +66,7 @@ export default function VasaPage() {
     };
   }, [compact]);
 
-  const { setSelectedPlayer, selectedPlayer } = useContext(ActorContext);
+  const { setSelectedActor, selectedActor } = useContext(ActorContext);
 
   const bossHealthChartData = useMemo(() => {
         let vasa: EnhancedRoomNpc | null = null;
@@ -118,12 +120,13 @@ export default function VasaPage() {
         return chartData;
       }, [events, npcState]);
     
-      const { entitiesByTick, preloads } = useMapEntities(
-        challenge,
-        playerState,
-        npcState,
-        totalTicks,
-      );
+const getEntities = useMapEntities(
+    challenge,
+    playerState,
+    npcState,
+    totalTicks,
+  );
+  const preloads = usePreloads(npcState, false);
     
       if (loading || challenge === null) {
         return <Loading />;
@@ -180,6 +183,7 @@ export default function VasaPage() {
           playing={playing}
           playerState={playerState}
           timelineTicks={totalTicks}
+          bcf={bcf}
           updateTickOnPage={setTick}
           npcs={npcState}
           splits={[]}
@@ -192,7 +196,7 @@ export default function VasaPage() {
           <p>Map replay coming soon</p>
         </div> */}
         <BossPageReplay
-          entities={entitiesByTick.get(currentTick) ?? []}
+          entities={getEntities(currentTick)}
           preloads={preloads}
           mapDef={mapDefinition}
           playing={playing}
@@ -203,8 +207,8 @@ export default function VasaPage() {
         />
         <BossPageParty
           playerTickState={playerTickState}
-          selectedPlayer={selectedPlayer}
-          setSelectedPlayer={setSelectedPlayer}
+          selectedActor={selectedActor}
+          setSelectedActor={setSelectedActor}
         />
       </div>
 

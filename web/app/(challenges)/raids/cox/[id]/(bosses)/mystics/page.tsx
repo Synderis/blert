@@ -27,6 +27,7 @@ import {
   EnhancedRoomNpc,
   useMapEntities,
   usePlayingState,
+  usePreloads,
   useStageEvents,
 } from '@/utils/boss-room-state';
 
@@ -51,6 +52,7 @@ export default function MysticsPage() {
     events,
     playerState,
     npcState,
+    bcf,
     loading,
   } = useStageEvents<CoxRaid>(Stage.COX_MYSTICS);
 
@@ -65,7 +67,7 @@ export default function MysticsPage() {
     };
   }, [compact]);
 
-  const { setSelectedPlayer, selectedPlayer } = useContext(ActorContext);
+  const { setSelectedActor, selectedActor } = useContext(ActorContext);
 
   const mysticBosses: BossDefinition[] = [
     { name: 'Mystic 1', dataKey: 'mystic1Health', color: '#ef4444' },
@@ -190,12 +192,13 @@ export default function MysticsPage() {
     return chartData;
   }, [events, npcState, totalTicks]);
 
-  const { entitiesByTick, preloads } = useMapEntities(
+  const getEntities = useMapEntities(
     challenge,
     playerState,
     npcState,
     totalTicks,
   );
+  const preloads = usePreloads(npcState, false);
 
   if (loading || challenge === null) {
     return <Loading />;
@@ -252,6 +255,7 @@ export default function MysticsPage() {
           playing={playing}
           playerState={playerState}
           timelineTicks={totalTicks}
+          bcf={bcf}
           updateTickOnPage={setTick}
           npcs={npcState}
           splits={[]}
@@ -264,7 +268,7 @@ export default function MysticsPage() {
           <p>Map replay coming soon</p>
         </div> */}
         <BossPageReplay
-          entities={entitiesByTick.get(currentTick) ?? []}
+          entities={getEntities(currentTick)}
           preloads={preloads}
           mapDef={mapDefinition}
           playing={playing}
@@ -275,8 +279,8 @@ export default function MysticsPage() {
         />
         <BossPageParty
           playerTickState={playerTickState}
-          selectedPlayer={selectedPlayer}
-          setSelectedPlayer={setSelectedPlayer}
+          selectedActor={selectedActor}
+          setSelectedActor={setSelectedActor}
         />
       </div>
 

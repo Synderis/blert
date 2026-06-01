@@ -28,6 +28,7 @@ import {
   EnhancedRoomNpc,
   useMapEntities,
   usePlayingState,
+  usePreloads,
   useStageEvents,
 } from '@/utils/boss-room-state';
 
@@ -52,6 +53,7 @@ export default function GuardiansPage() {
     events,
     playerState,
     npcState,
+    bcf,
     loading,
   } = useStageEvents<CoxRaid>(Stage.COX_GUARDIANS);
 
@@ -66,7 +68,7 @@ export default function GuardiansPage() {
     };
   }, [compact]);
 
-  const { setSelectedPlayer, selectedPlayer } = useContext(ActorContext);
+  const { setSelectedActor, selectedActor } = useContext(ActorContext);
 
   const guardianBosses: BossDefinition[] = [
     { name: 'Guardian 1', dataKey: 'guardian1Health', color: '#ef4444' },
@@ -171,12 +173,13 @@ export default function GuardiansPage() {
     return chartData;
   }, [events, npcState, totalTicks]);
 
-  const { entitiesByTick, preloads } = useMapEntities(
+  const getEntities = useMapEntities(
     challenge,
     playerState,
     npcState,
     totalTicks,
   );
+  const preloads = usePreloads(npcState, false);
 
   if (loading || challenge === null) {
     return <Loading />;
@@ -233,6 +236,7 @@ export default function GuardiansPage() {
           playing={playing}
           playerState={playerState}
           timelineTicks={totalTicks}
+          bcf={bcf}
           updateTickOnPage={setTick}
           npcs={npcState}
           splits={[]}
@@ -245,7 +249,7 @@ export default function GuardiansPage() {
           <p>Map replay coming soon</p>
         </div> */}
         <BossPageReplay
-          entities={entitiesByTick.get(currentTick) ?? []}
+          entities={getEntities(currentTick)}
           preloads={preloads}
           mapDef={mapDefinition}
           playing={playing}
@@ -256,8 +260,8 @@ export default function GuardiansPage() {
         />
         <BossPageParty
           playerTickState={playerTickState}
-          selectedPlayer={selectedPlayer}
-          setSelectedPlayer={setSelectedPlayer}
+          selectedActor={selectedActor}
+          setSelectedActor={setSelectedActor}
         />
       </div>
 

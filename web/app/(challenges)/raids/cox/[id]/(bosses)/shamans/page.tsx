@@ -27,6 +27,7 @@ import {
   EnhancedRoomNpc,
   useMapEntities,
   usePlayingState,
+  usePreloads,
   useStageEvents,
 } from '@/utils/boss-room-state';
 
@@ -51,6 +52,7 @@ export default function ShamansPage() {
     events,
     playerState,
     npcState,
+    bcf,
     loading,
   } = useStageEvents<CoxRaid>(Stage.COX_SHAMANS);
 
@@ -65,7 +67,7 @@ export default function ShamansPage() {
     };
   }, [compact]);
 
-  const { setSelectedPlayer, selectedPlayer } = useContext(ActorContext);
+  const { setSelectedActor, selectedActor } = useContext(ActorContext);
 
   const shamanBosses: BossDefinition[] = [
     { name: 'Shaman 1', dataKey: 'shaman1Health', color: '#ef4444' },
@@ -170,12 +172,13 @@ export default function ShamansPage() {
       return chartData;
     }, [events, npcState, totalTicks]);
   
-    const { entitiesByTick, preloads } = useMapEntities(
+    const getEntities = useMapEntities(
       challenge,
       playerState,
       npcState,
       totalTicks,
     );
+    const preloads = usePreloads(npcState, false);
   
     if (loading || challenge === null) {
       return <Loading />;
@@ -232,6 +235,7 @@ export default function ShamansPage() {
           playing={playing}
           playerState={playerState}
           timelineTicks={totalTicks}
+          bcf={bcf}
           updateTickOnPage={setTick}
           npcs={npcState}
           splits={[]}
@@ -244,7 +248,7 @@ export default function ShamansPage() {
           <p>Map replay coming soon</p>
         </div> */}
         <BossPageReplay
-          entities={entitiesByTick.get(currentTick) ?? []}
+          entities={getEntities(currentTick)}
           preloads={preloads}
           mapDef={mapDefinition}
           playing={playing}
@@ -255,8 +259,8 @@ export default function ShamansPage() {
         />
         <BossPageParty
           playerTickState={playerTickState}
-          selectedPlayer={selectedPlayer}
-          setSelectedPlayer={setSelectedPlayer}
+          selectedActor={selectedActor}
+          setSelectedActor={setSelectedActor}
         />
       </div>
 
