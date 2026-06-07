@@ -261,6 +261,7 @@ type StatsTarget = {
   tobStats?: TobChallengeStats;
   mokhaiotlStats?: MokhaiotlChallengeStats;
   infernoStats?: InfernoChallengeStats;
+  coxStats?: CoxChallengeStats;
 };
 
 type StatsLoadEntry<T extends StatsTarget> = {
@@ -378,6 +379,25 @@ async function attachChallengeStats<T extends StatsTarget>(
             continue;
           }
           target.infernoStats = statsObject<InfernoChallengeStats>(row);
+        }
+      }),
+    );
+  }
+
+  const coxIds = idsByType.get(ChallengeType.COX);
+  if (coxIds !== undefined && coxIds.length > 0) {
+    promises.push(
+      sql<(StatsObject & { challenge_id: number })[]>`
+        SELECT * FROM cox_challenge_stats
+        WHERE challenge_id = ANY(${coxIds})
+      `.then((rows) => {
+        for (const row of rows) {
+          const challengeId = (row as { challenge_id: number }).challenge_id;
+          const target = targetsById.get(challengeId);
+          if (target === undefined) {
+            continue;
+          }
+          target.coxStats = statsObject<CoxChallengeStats>(row);
         }
       }),
     );
@@ -1113,23 +1133,6 @@ export async function findChallenges(
         })),
       ),
     );
-
-    if (types.has(ChallengeType.COX )) {
-      loadPromises.push(
-        sql<({ challenge_id?: number; id?: number } & CoxChallengeStats)[]>`
-          SELECT *
-          FROM cox_challenge_stats
-          WHERE challenge_id = ANY(${types.get(ChallengeType.COX)!})
-        `.then((stats) => {
-          stats.forEach((s) => {
-            const challengeId = s.challenge_id!;
-            delete s.id;
-            delete s.challenge_id;
-            extra[challengeId].coxStats = snakeToCamelObject(s);
-          });
-        }),
-      );
-    }
   }
 
   loadPromises.push(
@@ -2087,12 +2090,6 @@ export async function loadSessionWithStats(
 
     // PB rows are sorted by creation date, so the latest row is the fastest.
     pbsByPlayer.get(pb.username)?.set(pb.type, pb.ticks);
-  }
-
-  for (const stat of challengeStats) {
-    const challengeId = stat.challenge_id;
-    //// @ts-expect-error `stat` is guaranteed to have the correct type.
-    extraChallengeData[challengeId][statsMeta!.field] = statsObject(stat);
   }
 
   const challenges: SessionChallenge[] = rawChallenges.map((c) => ({
